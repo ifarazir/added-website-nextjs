@@ -16,6 +16,8 @@ type Values = {
   aboutEyebrow: string | null;
   aboutHeading: string | null;
   aboutBody: string | null;
+  collaborationsHeading: string | null;
+  collaborationsBody: string | null;
   marqueeText: string | null;
   showMarquee: boolean;
   heroAutoplay: boolean;
@@ -54,6 +56,33 @@ export function SettingsForm({ settings }: { settings: Values }) {
           </Field>
           <Field label="Body" htmlFor="aboutBody">
             <Textarea id="aboutBody" name="aboutBody" rows={5} defaultValue={settings.aboutBody ?? ""} />
+          </Field>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Collaborations</CardTitle>
+          <CardDescription>
+            The section the header and footer &ldquo;Collaborations&rdquo; links point at.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-5">
+          <Field label="Heading" htmlFor="collaborationsHeading">
+            <Textarea
+              id="collaborationsHeading"
+              name="collaborationsHeading"
+              rows={2}
+              defaultValue={settings.collaborationsHeading ?? ""}
+            />
+          </Field>
+          <Field label="Body" htmlFor="collaborationsBody">
+            <Textarea
+              id="collaborationsBody"
+              name="collaborationsBody"
+              rows={5}
+              defaultValue={settings.collaborationsBody ?? ""}
+            />
           </Field>
         </CardContent>
       </Card>

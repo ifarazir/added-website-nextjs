@@ -14,7 +14,7 @@ export function SiteFooter({ settings }: { settings: Settings }) {
   return (
     <footer
       id="contact"
-      className="border-t border-hairline bg-paper px-[6vw] pt-[7vh] pb-[3vh] md:px-[3vw]"
+      className="scroll-mt-[32vh] border-t border-hairline bg-paper px-[6vw] pt-[7vh] pb-[3vh] md:pr-[3vw] md:pl-[9vw]"
     >
       <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 md:grid-cols-[1.6fr_1fr_1fr_1fr] md:gap-x-[3vw] md:gap-y-0">
         <NewsletterForm />

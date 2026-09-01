@@ -115,12 +115,62 @@ npm i @aws-sdk/client-s3
 | --- | --- |
 | `npm run dev` / `build` / `start` | The usual Next.js three. |
 | `npm run typecheck` | `tsc --noEmit`. |
+| `npm run lint` | ESLint 9 flat config with the Next.js rules. |
 | `npm run db:generate` | Write a new SQL migration from `src/db/schema.ts`. |
 | `npm run db:migrate` | Apply pending migrations. |
 | `npm run db:push` | Push the schema straight to the database (development only). |
 | `npm run db:studio` | Drizzle Studio. |
 | `npm run db:seed` | Load the catalogue. Re-runnable — rows are matched on slug and updated. |
 | `npm run images:build` | Re-derive `public/images` from the raw brand photography (`SOURCE_DIR=…`). |
+
+---
+
+## SEO
+
+- `app/sitemap.ts` lists the homepage, the collection, every category filter and
+  every published product, with `lastModified` from the database.
+- `app/robots.ts` allows everything except `/admin` and `/uploads/`.
+- Product pages emit `Product` and `BreadcrumbList` JSON-LD; the homepage emits
+  `Organization`. No `offers` block — the studio publishes no prices, and a
+  fabricated one would be worse than none.
+- Unknown slugs and unknown `?category=` values return a real HTTP 404.
+
+> There is deliberately **no** `app/(site)/loading.tsx`. A loading file creates a
+> Suspense boundary that starts streaming the response before the page runs, so
+> `notFound()` could no longer set the status and every missing product returned
+> a soft 404 — HTTP 200 with a "not found" body. Correct status codes matter
+> more here than a loading skeleton on pages that are already fast.
+
+## Abuse protection
+
+`src/lib/rate-limit.ts` is a fixed-window counter held in the process:
+
+- **Login** — 10 attempts per 15 minutes, counted per IP *and* per account, so
+  one host cannot walk the user list and a botnet cannot hammer one account. A
+  successful sign-in clears both counters. The trade-off is real: ten bad
+  guesses locks that account out for the rest of the window.
+- **Newsletter** — 5 sign-ups per IP per hour, plus a hidden `company` field.
+  A filled honeypot gets the success message and is dropped.
+
+It is process-local on purpose: no infrastructure, enough for a single
+instance. Behind more than one instance, move the counter to Redis — `check()`
+is the only function that changes.
+
+## Deployment
+
+`Dockerfile` builds the Next.js standalone output and runs it as a non-root
+user with `UPLOAD_DIR=/data/uploads` exposed as a volume. Migrations are **not**
+run by the image — apply them against the target database as a separate step
+before rolling out:
+
+```bash
+docker build -t added-website --build-arg NEXT_PUBLIC_SITE_URL=https://addedforms.com .
+npm run db:migrate            # against the production DATABASE_URL
+docker run -p 3000:3000 --env-file .env -v added-uploads:/data/uploads added-website
+```
+
+`.github/workflows/ci.yml` runs typecheck, lint, a migrate-and-seed against a
+throwaway PostgreSQL service, and a build on every push and pull request.
 
 ---
 

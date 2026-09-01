@@ -29,6 +29,15 @@ export function NewsletterForm() {
         Newsletter
       </span>
       <form action={formAction} className="flex gap-3.5 border-b border-ink/25 pb-2.5">
+        {/* Honeypot: off-screen, unfocusable, never announced. */}
+        <input
+          type="text"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden
+          className="pointer-events-none absolute -left-[9999px] size-0 opacity-0"
+        />
         <label htmlFor="newsletter-email" className="sr-only">
           Email address
         </label>

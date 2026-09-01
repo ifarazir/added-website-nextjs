@@ -344,6 +344,9 @@ async function main() {
     aboutHeading: "We add form to material. Nothing more, nothing less.",
     aboutBody:
       "ADDED FORMS is a studio for interior accessories. Each object begins as raw stock — a rod, a sheet, a blank of wood — and is reduced to its essential geometry. What remains is quiet, precise, and made to stay.",
+    collaborationsHeading: "We build with people who build carefully.",
+    collaborationsBody:
+      "The studio takes on a small number of collaborations each year — with architects and interior designers on pieces for a specific room, and with brands on objects that carry both names. Custom work starts from the same four materials and the same rule: reduce it until nothing is left to remove.",
     marqueeText:
       "Added Forms — Stainless Steel — Iron — Aluminium — Wood — Interior Objects — Personal Accessories — Shelving & Storage — Decorative Objects —",
     showMarquee: true,

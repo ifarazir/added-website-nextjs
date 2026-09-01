@@ -12,7 +12,7 @@ export default async function SettingsPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
         <p className="text-sm text-muted-foreground">
-          Homepage copy, the marquee band and the studio's contact details.
+          Homepage copy, the marquee band and the studio&rsquo;s contact details.
         </p>
       </div>
 
@@ -21,6 +21,9 @@ export default async function SettingsPage() {
           aboutEyebrow: row?.aboutEyebrow ?? DEFAULT_SETTINGS.aboutEyebrow,
           aboutHeading: row?.aboutHeading ?? DEFAULT_SETTINGS.aboutHeading,
           aboutBody: row?.aboutBody ?? DEFAULT_SETTINGS.aboutBody,
+          collaborationsHeading:
+            row?.collaborationsHeading ?? DEFAULT_SETTINGS.collaborationsHeading,
+          collaborationsBody: row?.collaborationsBody ?? DEFAULT_SETTINGS.collaborationsBody,
           marqueeText: row?.marqueeText ?? DEFAULT_SETTINGS.marqueeText,
           showMarquee: row?.showMarquee ?? DEFAULT_SETTINGS.showMarquee,
           heroAutoplay: row?.heroAutoplay ?? DEFAULT_SETTINGS.heroAutoplay,

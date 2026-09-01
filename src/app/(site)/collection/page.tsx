@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { Eyebrow } from "@/components/site/eyebrow";
 import { ProductCard } from "@/components/site/product-card";
@@ -25,6 +26,9 @@ export default async function CollectionPage({
   ]);
 
   const active = categories.find((c) => c.slug === activeSlug);
+  // A ?category= that matches nothing is a bad URL, not "show everything".
+  if (activeSlug && !active) notFound();
+
   const list = active ? products.filter((p) => p.categoryId === active.id) : products;
 
   const filters = [
@@ -35,7 +39,7 @@ export default async function CollectionPage({
   return (
     <>
       {/* Starts below the header's PRODUCTS button, which floats at 25vh. */}
-      <section className="bg-paper px-[6vw] pt-[26vh] md:px-[4vw] md:pt-[34vh]">
+      <section className="bg-paper px-[6vw] pt-[26vh] md:pr-[4vw] md:pl-[9vw] md:pt-[34vh]">
         <Eyebrow className="mb-[3vh]">{active ? active.name : "All objects"}</Eyebrow>
 
         <div className="flex flex-wrap items-end justify-between gap-6 border-b border-hairline pb-[5vh] md:pr-[14vw]">
@@ -79,7 +83,7 @@ export default async function CollectionPage({
         </nav>
       </section>
 
-      <section className="bg-paper px-[6vw] pt-[4vh] pb-[16vh] md:px-[4vw]">
+      <section className="bg-paper px-[6vw] pt-[4vh] pb-[16vh] md:pr-[4vw] md:pl-[9vw]">
         {list.length === 0 ? (
           <p className="py-[10vh] text-center text-[11px] tracking-wide-brand text-ink-45 uppercase">
             No objects in this category yet.
@@ -106,7 +110,7 @@ export default async function CollectionPage({
         )}
       </section>
 
-      <section className="border-t border-hairline bg-paper px-[6vw] py-[10vh] md:px-[4vw]">
+      <section className="border-t border-hairline bg-paper px-[6vw] py-[10vh] md:pr-[4vw] md:pl-[9vw]">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <h2
             data-reveal

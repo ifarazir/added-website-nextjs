@@ -5,6 +5,7 @@ import { Eyebrow } from "@/components/site/eyebrow";
 import { HeroSlider } from "@/components/site/hero-slider";
 import { Marquee } from "@/components/site/marquee";
 import { ProductCard } from "@/components/site/product-card";
+import { organisationSchema, StructuredData } from "@/components/site/structured-data";
 import {
   getCategories,
   getFeaturedProducts,
@@ -43,6 +44,8 @@ export default async function HomePage() {
 
   return (
     <>
+      <StructuredData data={organisationSchema(settings)} />
+
       <HeroSlider
         autoplay={settings.heroAutoplay}
         slides={slides.map((slide) => ({
@@ -57,7 +60,7 @@ export default async function HomePage() {
       {/* ---------------------------------------------------------------- */}
       {/* Manifesto                                                        */}
       {/* ---------------------------------------------------------------- */}
-      <section id="about" className="bg-paper px-[6vw] pt-[18vh] pb-[16vh] md:px-[3vw]">
+      <section id="about" className="scroll-mt-[32vh] bg-paper px-[6vw] pt-[18vh] pb-[16vh] md:pr-[3vw] md:pl-[9vw]">
         <Eyebrow data-reveal className="mb-[5vh]">
           {settings.aboutEyebrow}
         </Eyebrow>
@@ -82,7 +85,7 @@ export default async function HomePage() {
       {/* Selected objects — masonry                                       */}
       {/* ---------------------------------------------------------------- */}
       {selected.length > 0 && (
-        <section className="border-t border-hairline-soft bg-paper px-[6vw] py-[12vh] md:px-[3vw]">
+        <section className="border-t border-hairline-soft bg-paper px-[6vw] py-[12vh] md:pr-[3vw] md:pl-[9vw]">
           <div data-reveal className="mb-[7vh] flex items-baseline justify-between gap-4 md:pr-[14vw]">
             <h2 className="font-display text-[clamp(16px,1.4vw,22px)] font-bold tracking-[0.22em] uppercase">
               Selected objects
@@ -156,16 +159,51 @@ export default async function HomePage() {
       </section>
 
       {/* ---------------------------------------------------------------- */}
+      {/* Collaborations — the target of the header and footer links       */}
+      {/* ---------------------------------------------------------------- */}
+      <section
+        id="collaborations"
+        className="scroll-mt-[32vh] border-t border-hairline-soft bg-paper px-[6vw] py-[14vh] md:pr-[3vw] md:pl-[9vw]"
+      >
+        <div className="grid grid-cols-1 gap-[6vh] md:grid-cols-[1fr_1fr] md:gap-[4vw] md:pr-[14vw]">
+          <div>
+            <Eyebrow data-reveal className="mb-[5vh]">
+              Collaborations
+            </Eyebrow>
+            <h2
+              data-reveal
+              className="max-w-[20ch] font-display text-[clamp(24px,2.8vw,46px)] leading-[1.25] font-light tracking-[0.05em] uppercase"
+            >
+              {settings.collaborationsHeading}
+            </h2>
+          </div>
+
+          <div data-reveal className="flex flex-col gap-[4vh] md:pt-[9vh]">
+            <p className="max-w-[46ch] text-[15px] leading-[1.85] font-light text-ink-70">
+              {settings.collaborationsBody}
+            </p>
+            <a
+              href={`mailto:${settings.email}?subject=${encodeURIComponent("Collaboration enquiry")}`}
+              className="inline-flex w-fit items-center gap-3 text-[11px] font-bold tracking-brand uppercase transition-opacity hover:opacity-60"
+            >
+              <span className="inline-block size-[7px] bg-acid" />
+              Start a conversation
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------------------- */}
       {/* Lookbook — scrubs sideways as the page scrolls                   */}
       {/* ---------------------------------------------------------------- */}
       {lookbook.length > 0 && (
         <section className="overflow-hidden border-t border-hairline-soft bg-paper pt-[12vh] pb-[14vh]">
-          <Eyebrow data-reveal className="mb-[6vh] px-[6vw] md:px-[3vw]">
+          <Eyebrow data-reveal className="mb-[6vh] px-[6vw] md:pr-[3vw] md:pl-[9vw]">
             Lookbook — {new Date().getFullYear()}
           </Eyebrow>
           <div
             data-look-track
-            className="flex w-max items-end gap-[4vw] pl-[6vw] md:gap-[2vw] md:pl-[3vw]"
+            className="flex w-max items-end gap-[4vw] pl-[6vw] md:gap-[2vw] md:pl-[9vw]"
           >
             {lookbook.map((item) => (
               <Image

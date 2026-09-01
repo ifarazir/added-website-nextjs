@@ -2,6 +2,7 @@
 
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { db } from "@/db";
@@ -14,9 +15,14 @@ import {
   requireUser,
   verifyPassword,
 } from "@/lib/auth";
+import { clientKey, rateLimit, resetRateLimit } from "@/lib/rate-limit";
 import { loginSchema, passwordSchema } from "@/lib/validators";
 
 import { fail, fieldErrors, ok, type ActionState } from "./types";
+
+/** Ten attempts per address and per account, per fifteen minutes. */
+const LOGIN_LIMIT = 10;
+const LOGIN_WINDOW = 15 * 60 * 1000;
 
 export async function login(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const parsed = loginSchema.safeParse({
@@ -28,6 +34,19 @@ export async function login(_prev: ActionState, formData: FormData): Promise<Act
     return fail("Check the form.", fieldErrors(parsed.error.issues));
   }
 
+  // Throttled on both axes: the address stops one host guessing many accounts,
+  // the account stops a botnet guessing one.
+  const ipKey = clientKey(await headers(), "login");
+  const accountKey = `login:account:${parsed.data.email.toLowerCase()}`;
+
+  for (const key of [ipKey, accountKey]) {
+    const limit = rateLimit(key, LOGIN_LIMIT, LOGIN_WINDOW);
+    if (!limit.allowed) {
+      const minutes = Math.ceil(limit.retryAfter / 60);
+      return fail(`Too many attempts. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`);
+    }
+  }
+
   const user = await findUserByEmail(parsed.data.email);
   // Same message either way — never reveal whether the address exists.
   const valid = user ? await verifyPassword(parsed.data.password, user.passwordHash) : false;
@@ -35,6 +54,9 @@ export async function login(_prev: ActionState, formData: FormData): Promise<Act
   if (!user || !valid) {
     return fail("Those details do not match an account.");
   }
+
+  resetRateLimit(ipKey);
+  resetRateLimit(accountKey);
 
   await createSession({ sub: user.id, email: user.email, name: user.name, role: user.role });
 

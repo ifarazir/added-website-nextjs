@@ -117,6 +117,8 @@ export async function saveSettings(_prev: ActionState, formData: FormData): Prom
     aboutEyebrow: formData.get("aboutEyebrow"),
     aboutHeading: formData.get("aboutHeading"),
     aboutBody: formData.get("aboutBody"),
+    collaborationsHeading: formData.get("collaborationsHeading"),
+    collaborationsBody: formData.get("collaborationsBody"),
     marqueeText: formData.get("marqueeText"),
     showMarquee: bool(formData, "showMarquee"),
     heroAutoplay: bool(formData, "heroAutoplay"),

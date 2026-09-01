@@ -80,6 +80,8 @@ export const settingsSchema = z.object({
   aboutEyebrow: optionalText(80),
   aboutHeading: optionalText(400),
   aboutBody: optionalText(2000),
+  collaborationsHeading: optionalText(400),
+  collaborationsBody: optionalText(2000),
   marqueeText: optionalText(600),
   showMarquee: z.boolean().default(true),
   heroAutoplay: z.boolean().default(true),

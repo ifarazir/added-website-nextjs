@@ -6,6 +6,11 @@ import { notFound } from "next/navigation";
 import { Eyebrow } from "@/components/site/eyebrow";
 import { PlaceholderTile } from "@/components/site/placeholder-tile";
 import { ProductCard } from "@/components/site/product-card";
+import {
+  breadcrumbSchema,
+  productSchema,
+  StructuredData,
+} from "@/components/site/structured-data";
 import { getProductBySlug, getRelatedProducts, getSettings } from "@/lib/queries";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -21,7 +26,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: product.name,
     description,
+    alternates: { canonical: `/product/${product.slug}` },
     openGraph: {
+      type: "website",
       title: `${product.name} — ADDED FORMS`,
       description,
       images: image ? [image] : undefined,
@@ -44,6 +51,9 @@ export default async function ProductPage({ params }: Params) {
 
   return (
     <>
+      <StructuredData data={productSchema(product)} />
+      <StructuredData data={breadcrumbSchema(product)} />
+
       <section className="grid grid-cols-1 items-start bg-paper lg:grid-cols-[1.15fr_1fr]">
         {/* Image column — scrolls past the sticky details. */}
         <div className="flex flex-col gap-0.5">
@@ -147,7 +157,7 @@ export default async function ProductPage({ params }: Params) {
       </section>
 
       {related.length > 0 && (
-        <section className="border-t border-hairline-soft bg-paper px-[6vw] pt-[14vh] pb-[10vh] md:px-[4vw]">
+        <section className="border-t border-hairline-soft bg-paper px-[6vw] pt-[14vh] pb-[10vh] md:pr-[4vw] md:pl-[9vw]">
           <div data-reveal className="mb-[8vh] flex flex-wrap items-baseline justify-between gap-4 md:pr-[14vw]">
             <Eyebrow>
               {product.category ? `Also in ${product.category.name}` : "More objects"}

@@ -144,6 +144,8 @@ export const siteSettings = pgTable("site_settings", {
   aboutEyebrow: varchar("about_eyebrow", { length: 80 }),
   aboutHeading: text("about_heading"),
   aboutBody: text("about_body"),
+  collaborationsHeading: text("collaborations_heading"),
+  collaborationsBody: text("collaborations_body"),
   marqueeText: text("marquee_text"),
   showMarquee: boolean("show_marquee").notNull().default(true),
   heroAutoplay: boolean("hero_autoplay").notNull().default(true),
