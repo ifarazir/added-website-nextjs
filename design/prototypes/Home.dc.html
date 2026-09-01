@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700&family=Titillium+Web:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+body{margin:0;background:#FFFFFF;color:#262626;font-family:'Manrope',sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:#DAFF2B;color:#262626}
+a{color:inherit;text-decoration:none;transition:opacity .3s}
+a:hover{color:inherit;opacity:.5}
+input::placeholder{color:rgba(38,38,38,.35)}
+@keyframes af-marquee{to{transform:translateX(-50%)}}
+</style>
+</helmet>
+
+<header data-nav style="position:fixed;inset:0;z-index:60;color:#FFFFFF;pointer-events:none">
+  <div data-menuscrim style="position:absolute;inset:0;background:linear-gradient(to right,rgba(38,38,38,.6),rgba(38,38,38,0) 42%);opacity:0;transition:opacity .45s;pointer-events:none"></div>
+  <a href="Home.dc.html" style="position:absolute;left:3vw;top:4.5vh;display:flex;flex-direction:column;gap:6px;pointer-events:auto;width:4.4vw">
+    <span style="display:block;height:7vh;background-color:currentColor"></span>
+    <span style="display:block;height:7.6vh;background-color:currentColor"></span>
+  </a>
+  <button data-prodbtn onClick="{{ toggleProducts }}" style="position:absolute;left:3vw;top:25vh;pointer-events:auto;background:none;border:none;padding:0;cursor:pointer;color:inherit;font-family:'Manrope',sans-serif;font-size:11px;font-weight:300;letter-spacing:.35em;text-transform:uppercase">Products</button>
+  <div data-prodmenu style="position:absolute;left:3vw;top:30vh;display:flex;flex-direction:column;gap:22px;opacity:0;visibility:hidden;pointer-events:none;font-size:11px;letter-spacing:.35em;text-transform:uppercase">
+    <nav style="display:flex;flex-direction:column;align-items:flex-start;gap:9px">
+      <a href="Home.dc.html" style="font-weight:700">Home</a>
+      <a href="Collection.dc.html" style="font-weight:300">Shelves</a>
+      <a href="Collection.dc.html" style="font-weight:300">Coffee Tables</a>
+      <a href="Collection.dc.html" style="font-weight:300">Stool &amp; Bench</a>
+    </nav>
+    <nav style="display:flex;flex-direction:column;align-items:flex-start;gap:9px">
+      <a href="Collection.dc.html" style="font-weight:700">Personal Accessories</a>
+      <a href="Collection.dc.html" style="font-weight:300">Comb</a>
+    </nav>
+    <nav style="display:flex;flex-direction:column;align-items:flex-start;gap:9px">
+      <a href="Collection.dc.html" style="font-weight:700">Objects</a>
+      <a href="Product.dc.html" style="font-weight:300">Donut</a>
+      <a href="Collection.dc.html" style="font-weight:300">Jooje</a>
+      <a href="Collection.dc.html" style="font-weight:300">Book Holders</a>
+    </nav>
+  </div>
+  <nav style="position:absolute;right:1.4vw;top:8.5vh;display:flex;flex-direction:column;align-items:flex-end;gap:1.9vh;text-align:right;pointer-events:auto;font-size:11px;font-weight:300;letter-spacing:.35em;text-transform:uppercase">
+    <a href="#search" style="background:#DAFF2B;padding:4px 9px;color:#262626">Search</a>
+    <a href="#login" style="background:#DAFF2B;padding:4px 9px;color:#262626">Log In</a>
+    <a data-collab href="#collab" style="background:#DAFF2B;padding:4px 9px;color:#262626">Collaborations</a>
+    <a data-contactlink href="#contact" style="background:#DAFF2B;padding:4px 9px;color:#262626">Contact Us</a>
+    <div data-menuextra style="display:none;flex-direction:column;align-items:flex-end;gap:1.6vh;background:#DAFF2B;padding:16px 14px;margin-top:.5vh;color:#262626">
+      <a href="#contact">Contact Us</a>
+      <a href="tel:+989192233701" style="letter-spacing:.28em">+98 919 223 3701</a>
+      <a href="#contact">@ AddedForms</a>
+    </div>
+  </nav>
+</header>
+
+<section data-screen-label="Hero" data-navtheme="dark" style="position:relative;height:100vh;overflow:hidden;background:#eceae6">
+  <div data-slide style="position:absolute;inset:0;opacity:1" data-cap="Donut — mirror-polished stainless steel">
+    <img src="uploads/web-donut-hand.jpg" alt="Donut object held in hand" style="width:100%;height:100%;object-fit:cover;display:block">
+  </div>
+  <div data-slide style="position:absolute;inset:0;opacity:0" data-cap="Jooje — cast aluminium, sand-finished">
+    <img src="uploads/web-jooje-sand.jpg" alt="Jooje object in sand" style="width:100%;height:100%;object-fit:cover;display:block">
+  </div>
+  <div data-slide style="position:absolute;inset:0;opacity:0" data-cap="UFO Colander — brushed stainless steel">
+    <img src="uploads/web-colander.jpg" alt="Stainless colander in use" style="width:100%;height:100%;object-fit:cover;display:block">
+  </div>
+  <div data-slide style="position:absolute;inset:0;opacity:0" data-cap="Jooje — mirror sphere, studio still">
+    <img src="uploads/web-jooje-paint.jpg" alt="Mirror sphere on painted paper" style="width:100%;height:100%;object-fit:cover;display:block">
+  </div>
+  <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(38,38,38,.28) 0%,rgba(38,38,38,0) 30%);pointer-events:none"></div>
+  <svg viewBox="0 0 51.26 9.96" preserveAspectRatio="xMinYMin meet" style="position:absolute;right:3vw;bottom:4vh;width:56vw;fill:#FFFFFF;display:block;pointer-events:none"><path d="M4,0h2.78s4,9.96,4,9.96h-2.68s-.64-1.76-.64-1.76H3.3s-.64,1.76-.64,1.76H0S4,0,4,0ZM6.72,6.18l-1.32-3.67-1.35,3.67h2.68Z"></path><path d="M12.58,0h3.42c3.69,0,5.12,2.23,5.12,4.98,0,2.75-1.44,4.98-5.12,4.98h-3.42s0-9.96,0-9.96ZM15.87,7.81c1.82,0,2.69-1.24,2.69-2.83,0-1.59-.87-2.83-2.69-2.83h-.81v5.66h.81Z"></path><path d="M23.34,0h3.42c3.69,0,5.12,2.23,5.12,4.98s-1.44,4.98-5.12,4.98h-3.42s0-9.96,0-9.96ZM26.62,7.81c1.82,0,2.69-1.24,2.69-2.83,0-1.59-.87-2.83-2.69-2.83h-.81v5.66h.81Z"></path><path d="M40.5,0h-6.4v2.15h3.93s0,1.68,0,1.68h-3.37s.39,2.15.39,2.15h2.98s0,1.84,0,1.84h-3.93v2.15h6.4V0Z"></path><path d="M42.72,0h3.42c3.69,0,5.12,2.23,5.12,4.98,0,2.75-1.44,4.98-5.12,4.98h-3.42s0-9.96,0-9.96ZM46,7.81c1.82,0,2.69-1.24,2.69-2.83,0-1.59-.87-2.83-2.69-2.83h-.81v5.66h.81Z"></path></svg>
+  <div style="position:absolute;left:3vw;bottom:34px;color:#FFFFFF;display:flex;flex-direction:column;gap:16px;pointer-events:none">
+    <div data-hero-cap style="font-size:10px;font-weight:300;letter-spacing:.25em;text-transform:uppercase;opacity:.85">Donut — mirror-polished stainless steel</div>
+    <div data-dots style="display:flex;gap:8px;pointer-events:auto">
+      <button onClick="{{ go0 }}" style="width:26px;height:2px;background:#FFFFFF;border:none;padding:0;cursor:pointer;opacity:1"></button>
+      <button onClick="{{ go1 }}" style="width:26px;height:2px;background:#FFFFFF;border:none;padding:0;cursor:pointer;opacity:.35"></button>
+      <button onClick="{{ go2 }}" style="width:26px;height:2px;background:#FFFFFF;border:none;padding:0;cursor:pointer;opacity:.35"></button>
+      <button onClick="{{ go3 }}" style="width:26px;height:2px;background:#FFFFFF;border:none;padding:0;cursor:pointer;opacity:.35"></button>
+    </div>
+  </div>
+</section>
+
+<section id="about" data-screen-label="Manifesto" data-navtheme="light" style="background:#FFFFFF;padding:18vh 3vw 16vh">
+  <div data-reveal style="display:flex;align-items:center;gap:10px;margin-bottom:5vh">
+    <span style="width:7px;height:7px;background:#DAFF2B;display:inline-block"></span>
+    <span style="font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:rgba(38,38,38,.45)">About</span>
+  </div>
+  <h2 data-reveal style="margin:0;font-family:'Titillium Web',sans-serif;font-weight:300;font-size:clamp(28px,3.4vw,58px);letter-spacing:.05em;line-height:1.28;text-transform:uppercase;max-width:26ch">We add form to material. Nothing more, nothing less.</h2>
+  <div style="display:flex;justify-content:flex-end;margin-top:8vh">
+    <p data-reveal style="margin:0;max-width:44ch;font-size:15px;font-weight:300;line-height:1.85;color:rgba(38,38,38,.65)">ADDED FORMS is a studio for interior accessories. Each object begins as raw stock — a rod, a sheet, a blank of wood — and is reduced to its essential geometry. What remains is quiet, precise, and made to stay.</p>
+  </div>
+</section>
+
+<section data-screen-label="Selected Objects" data-navtheme="light" style="background:#FFFFFF;padding:12vh 3vw 12vh;border-top:1px solid rgba(38,38,38,.1)">
+  <div data-reveal style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7vh">
+    <h2 style="margin:0;font-family:'Titillium Web',sans-serif;font-weight:700;font-size:clamp(16px,1.4vw,22px);letter-spacing:.22em;text-transform:uppercase">Selected objects</h2>
+    <a href="Collection.dc.html" style="font-size:10px;font-weight:300;letter-spacing:.25em;text-transform:uppercase">View all</a>
+  </div>
+  <div style="column-count:3;column-gap:2vw">
+    <a href="Product.dc.html" data-reveal style="display:block;break-inside:avoid;margin:0 0 2vw">
+      <div data-plx style="overflow:hidden;aspect-ratio:4/5;background:#f5f5f2"><img src="uploads/web-asset-2.jpg" alt="Wireframe stand" style="width:100%;height:112%;object-fit:cover;display:block"></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase"><span>Wireframe</span><span style="color:rgba(38,38,38,.4)">Stainless steel</span></div>
+    </a>
+    <a href="Product.dc.html" data-reveal style="display:block;break-inside:avoid;margin:0 0 2vw">
+      <div data-plx style="overflow:hidden;aspect-ratio:1/1;background:#f5f5f2"><img src="uploads/web-jooje-paint.jpg" alt="Jooje mirror sphere" style="width:100%;height:112%;object-fit:cover;display:block"></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase"><span>Jooje</span><span style="color:rgba(38,38,38,.4)">Stainless steel</span></div>
+    </a>
+    <a href="Product.dc.html" data-reveal style="display:block;break-inside:avoid;margin:0 0 2vw">
+      <div data-plx style="overflow:hidden;aspect-ratio:3/4;background:#f5f5f2"><img src="uploads/web-comb-editorial.jpg" alt="Lior comb" style="width:100%;height:112%;object-fit:cover;display:block"></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase"><span>Lior Comb</span><span style="color:rgba(38,38,38,.4)">Stainless steel</span></div>
+    </a>
+    <a href="Product.dc.html" data-reveal style="display:block;break-inside:avoid;margin:0 0 2vw">
+      <div data-plx style="overflow:hidden;aspect-ratio:16/11;background:#f5f5f2"><img src="uploads/web-colander.jpg" alt="UFO colander" style="width:100%;height:112%;object-fit:cover;display:block"></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase"><span>UFO</span><span style="color:rgba(38,38,38,.4)">Stainless steel</span></div>
+    </a>
+    <a href="Product.dc.html" data-reveal style="display:block;break-inside:avoid;margin:0 0 2vw">
+      <div data-plx style="overflow:hidden;aspect-ratio:4/5;background:#f5f5f2"><img src="uploads/web-asset-4.jpg" alt="Donut on stone" style="width:100%;height:112%;object-fit:cover;display:block"></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase"><span>Donut</span><span style="color:rgba(38,38,38,.4)">Stainless steel</span></div>
+    </a>
+    <a href="Product.dc.html" data-reveal style="display:block;break-inside:avoid;margin:0 0 2vw">
+      <div data-plx style="overflow:hidden;aspect-ratio:5/4;background:#f5f5f2"><img src="uploads/web-asset-1.jpg" alt="Modular shelf" style="width:100%;height:112%;object-fit:cover;display:block"></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase"><span>Modular Shelf</span><span style="color:rgba(38,38,38,.4)">Stainless · Iron</span></div>
+    </a>
+    <a href="Product.dc.html" data-reveal style="display:block;break-inside:avoid;margin:0 0 2vw">
+      <div data-plx style="overflow:hidden;aspect-ratio:3/4;background:#f5f5f2"><img src="uploads/web-jooje-sand.jpg" alt="Jooje in sand" style="width:100%;height:112%;object-fit:cover;display:block"></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase"><span>Jooje — Sand</span><span style="color:rgba(38,38,38,.4)">Aluminium</span></div>
+    </a>
+    <a href="Product.dc.html" data-reveal style="display:block;break-inside:avoid;margin:0 0 2vw">
+      <div data-plx style="overflow:hidden;aspect-ratio:1/1;background:#f5f5f2"><img src="uploads/web-asset-5.jpg" alt="St table" style="width:100%;height:112%;object-fit:cover;display:block"></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase"><span>St Table</span><span style="color:rgba(38,38,38,.4)">Stainless steel</span></div>
+    </a>
+  </div>
+</section>
+
+<section data-screen-label="Index" data-navtheme="light" style="background:#FFFFFF;color:#262626;padding:0 0 12vh">
+  <sc-if value="{{ showMarquee }}" hint-placeholder-val="{{ true }}">
+    <div style="overflow:hidden;background:#DAFF2B;padding:12px 0">
+      <div style="display:flex;width:max-content;animation:af-marquee 28s linear infinite;font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;white-space:nowrap">
+        <span style="padding-right:3em">Added Forms — Stainless Steel — Iron — Aluminium — Wood — Interior Objects — Personal Accessories — Shelving &amp; Storage — Decorative Objects —&nbsp;</span>
+        <span style="padding-right:3em">Added Forms — Stainless Steel — Iron — Aluminium — Wood — Interior Objects — Personal Accessories — Shelving &amp; Storage — Decorative Objects —&nbsp;</span>
+      </div>
+    </div>
+  </sc-if>
+  <div style="padding:12vh 3vw 0">
+    <h2 data-reveal style="margin:0 0 8vh;font-family:'Titillium Web',sans-serif;font-weight:600;font-size:clamp(28px,3.4vw,60px);letter-spacing:.08em;line-height:1;text-transform:uppercase">Index</h2>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5vh 2vw">
+      <div data-reveal style="border-top:1px solid rgba(38,38,38,.18);padding-top:20px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;margin-bottom:22px;color:rgba(38,38,38,.45)">01 — Interior Objects</div>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:11px;font-weight:300;letter-spacing:.18em;text-transform:uppercase">
+          <a href="Collection.dc.html">Wireframes</a>
+          <a href="Collection.dc.html">Stools &amp; Benches</a>
+          <a href="Collection.dc.html">Magazine Rack</a>
+          <a href="Collection.dc.html">Mirrors</a>
+          <a href="Collection.dc.html">St Tables</a>
+          <a href="Collection.dc.html">UFO</a>
+        </div>
+      </div>
+      <div data-reveal style="border-top:1px solid rgba(38,38,38,.18);padding-top:20px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;margin-bottom:22px;color:rgba(38,38,38,.45)">02 — Personal Accessories</div>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:11px;font-weight:300;letter-spacing:.18em;text-transform:uppercase">
+          <a href="Collection.dc.html">Lior Comb</a>
+          <a href="Collection.dc.html">Jooje</a>
+          <a href="Collection.dc.html">Custom-Made Products</a>
+        </div>
+      </div>
+      <div data-reveal style="border-top:1px solid rgba(38,38,38,.18);padding-top:20px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;margin-bottom:22px;color:rgba(38,38,38,.45)">03 — Shelving &amp; Storage</div>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:11px;font-weight:300;letter-spacing:.18em;text-transform:uppercase">
+          <a href="Collection.dc.html">Systems</a>
+          <a href="Collection.dc.html">Trio Stand</a>
+          <a href="Collection.dc.html">Modular Shelf</a>
+        </div>
+      </div>
+      <div data-reveal style="border-top:1px solid rgba(38,38,38,.18);padding-top:20px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;margin-bottom:22px;color:rgba(38,38,38,.45)">04 — Decorative Objects</div>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:11px;font-weight:300;letter-spacing:.18em;text-transform:uppercase">
+          <a href="Product.dc.html">Donut</a>
+          <a href="Collection.dc.html">1/4</a>
+          <a href="Collection.dc.html">1/8</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Lookbook" data-navtheme="light" style="background:#FFFFFF;padding:12vh 0 14vh;overflow:hidden;border-top:1px solid rgba(38,38,38,.1)">
+  <div data-reveal style="display:flex;align-items:center;gap:10px;margin:0 3vw 6vh">
+    <span style="width:7px;height:7px;background:#DAFF2B;display:inline-block"></span>
+    <span style="font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:rgba(38,38,38,.45)">Lookbook — 2026</span>
+  </div>
+  <div data-look-track style="display:flex;gap:2vw;width:max-content;padding-left:3vw;align-items:flex-end">
+    <img src="uploads/web-comb-editorial.jpg" alt="Comb editorial" style="height:58vh;width:auto;display:block">
+    <img src="uploads/web-donut-hand.jpg" alt="Donut in hand" style="height:46vh;width:auto;display:block">
+    <img src="uploads/web-asset-2.jpg" alt="Wireframe stand editorial" style="height:58vh;width:auto;display:block">
+    <img src="uploads/web-jooje-sand.jpg" alt="Jooje in sand" style="height:46vh;width:auto;display:block">
+    <img src="uploads/web-asset-1.jpg" alt="Modular shelf editorial" style="height:52vh;width:auto;display:block">
+  </div>
+</section>
+
+<footer id="contact" data-screen-label="Footer" data-navtheme="light" style="background:#FFFFFF;color:#262626;border-top:1px solid rgba(38,38,38,.14);padding:7vh 3vw 3vh">
+  <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:3vw;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:18px;max-width:320px">
+      <span style="font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:rgba(38,38,38,.4)">Newsletter</span>
+      <div style="display:flex;gap:14px;border-bottom:1px solid rgba(38,38,38,.25);padding-bottom:10px">
+        <input placeholder="Email address" style="flex:1;background:transparent;border:none;outline:none;color:#262626;font-family:'Manrope',sans-serif;font-weight:300;font-size:12px;letter-spacing:.06em">
+        <button style="background:none;border:none;cursor:pointer;color:#262626;font-family:'Manrope',sans-serif;font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;padding:0">Join</button>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;font-size:10px;letter-spacing:.2em;text-transform:uppercase">
+      <span style="font-weight:700;color:rgba(38,38,38,.4);letter-spacing:.25em">Products</span>
+      <a href="Collection.dc.html">Collection</a>
+      <a href="Collection.dc.html">Objects</a>
+      <a href="Collection.dc.html">Storage</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;font-size:10px;letter-spacing:.2em;text-transform:uppercase">
+      <span style="font-weight:700;color:rgba(38,38,38,.4);letter-spacing:.25em">Studio</span>
+      <a href="#about">About</a>
+      <a href="#collab">Collaborations</a>
+      <a href="#contact">Contact Us</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;font-size:10px;letter-spacing:.2em;text-transform:uppercase">
+      <span style="font-weight:700;color:rgba(38,38,38,.4);letter-spacing:.25em">Follow</span>
+      <a href="#contact">Instagram</a>
+      <a href="#contact">Pinterest</a>
+      <a href="mailto:hello@addedforms.com" style="text-transform:none;letter-spacing:.04em">hello@addedforms.com</a>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8vh;padding-top:18px;border-top:1px solid rgba(38,38,38,.1);font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:rgba(38,38,38,.4)">
+    <span>© 2026 Added Forms</span>
+    <svg viewBox="0 0 51.26 9.96" style="width:88px;fill:rgba(38,38,38,.5);display:block"><path d="M4,0h2.78s4,9.96,4,9.96h-2.68s-.64-1.76-.64-1.76H3.3s-.64,1.76-.64,1.76H0S4,0,4,0ZM6.72,6.18l-1.32-3.67-1.35,3.67h2.68Z"></path><path d="M12.58,0h3.42c3.69,0,5.12,2.23,5.12,4.98,0,2.75-1.44,4.98-5.12,4.98h-3.42s0-9.96,0-9.96ZM15.87,7.81c1.82,0,2.69-1.24,2.69-2.83,0-1.59-.87-2.83-2.69-2.83h-.81v5.66h.81Z"></path><path d="M23.34,0h3.42c3.69,0,5.12,2.23,5.12,4.98s-1.44,4.98-5.12,4.98h-3.42s0-9.96,0-9.96ZM26.62,7.81c1.82,0,2.69-1.24,2.69-2.83,0-1.59-.87-2.83-2.69-2.83h-.81v5.66h.81Z"></path><path d="M40.5,0h-6.4v2.15h3.93s0,1.68,0,1.68h-3.37s.39,2.15.39,2.15h2.98s0,1.84,0,1.84h-3.93v2.15h6.4V0Z"></path><path d="M42.72,0h3.42c3.69,0,5.12,2.23,5.12,4.98,0,2.75-1.44,4.98-5.12,4.98h-3.42s0-9.96,0-9.96ZM46,7.81c1.82,0,2.69-1.24,2.69-2.83,0-1.59-.87-2.83-2.69-2.83h-.81v5.66h.81Z"></path></svg>
+    <span>Tehran — Iran</span>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroAutoplay&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Home&quot;},&quot;showMarquee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Home&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    this._alive = true;
+    this._slide = 0;
+    this._menuOpen = false;
+    const wait = () => {
+      if (!this._alive) return;
+      if (window.gsap && window.ScrollTrigger) {
+        window.gsap.registerPlugin(window.ScrollTrigger);
+        this.initMotion();
+      } else setTimeout(wait, 80);
+    };
+    wait();
+  }
+  componentWillUnmount() { this._alive = false; clearInterval(this._timer); this.killMotion(); }
+  componentDidUpdate(prev) {
+    if (prev && prev.showMarquee !== this.props.showMarquee) { clearTimeout(this._re); this._re = setTimeout(() => this.initMotion(), 120); }
+    if (prev && prev.heroAutoplay !== this.props.heroAutoplay) this.startAuto();
+  }
+  killMotion() {
+    (this._tweens || []).forEach(t => { if (t && t.scrollTrigger) t.scrollTrigger.kill(true); if (t && t.kill) t.kill(); });
+    this._tweens = [];
+  }
+  slides() { return Array.from(document.querySelectorAll('[data-slide]')); }
+  goTo(i) {
+    const gsap = window.gsap, s = this.slides();
+    if (!gsap || !s.length) return;
+    i = (i + s.length) % s.length;
+    if (i === this._slide) return;
+    gsap.to(s[this._slide], { opacity: 0, duration: 1.1, ease: 'power2.inOut' });
+    gsap.fromTo(s[i], { opacity: 0 }, { opacity: 1, duration: 1.1, ease: 'power2.inOut' });
+    const img = s[i].querySelector('img');
+    if (img) gsap.fromTo(img, { scale: 1.07 }, { scale: 1, duration: 7, ease: 'power1.out' });
+    this._slide = i;
+    const cap = document.querySelector('[data-hero-cap]');
+    if (cap) gsap.to(cap, { opacity: 0, duration: .35, onComplete: () => { cap.textContent = s[i].getAttribute('data-cap') || ''; gsap.to(cap, { opacity: .85, duration: .5 }); } });
+    Array.from(document.querySelectorAll('[data-dots] button')).forEach((b, n) => gsap.to(b, { opacity: n === i ? 1 : .35, duration: .4 }));
+  }
+  startAuto() {
+    clearInterval(this._timer);
+    if ((this.props.heroAutoplay ?? true) === false) return;
+    this._timer = setInterval(() => { if (this._alive) this.goTo(this._slide + 1); }, 5200);
+  }
+  toggleProducts() {
+    const gsap = window.gsap, m = document.querySelector('[data-prodmenu]');
+    const collab = document.querySelector('[data-collab]'), extra = document.querySelector('[data-menuextra]');
+    const contact = document.querySelector('[data-contactlink]'), scrim = document.querySelector('[data-menuscrim]');
+    if (!m) return;
+    this._menuOpen = !this._menuOpen;
+    if (this._menuOpen) {
+      m.style.visibility = 'visible'; m.style.pointerEvents = 'auto';
+      if (collab) collab.style.display = 'none';
+      if (contact) contact.style.display = 'none';
+      if (scrim) scrim.style.opacity = '1';
+      if (extra) extra.style.display = 'flex';
+      const items = Array.from(m.querySelectorAll('a'));
+      if (gsap) { gsap.to(m, { opacity: 1, duration: .3 }); gsap.fromTo(items, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: .55, stagger: .035, ease: 'power3.out' }); }
+      else m.style.opacity = '1';
+    } else {
+      if (collab) collab.style.display = '';
+      if (contact) contact.style.display = '';
+      if (scrim) scrim.style.opacity = '0';
+      if (extra) extra.style.display = 'none';
+      const hide = () => { m.style.visibility = 'hidden'; m.style.pointerEvents = 'none'; };
+      if (gsap) gsap.to(m, { opacity: 0, duration: .25, onComplete: hide });
+      else { m.style.opacity = '0'; hide(); }
+    }
+  }
+  initMotion() {
+    const gsap = window.gsap, ST = window.ScrollTrigger;
+    if (!gsap || !ST || !this._alive) return;
+    this.killMotion();
+    const T = this._tweens;
+    const q = s => Array.from(document.querySelectorAll(s));
+    q('[data-reveal]').forEach(el => {
+      T.push(gsap.fromTo(el, { y: 42, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1, ease: 'power3.out', immediateRender: false, scrollTrigger: { trigger: el, start: 'top 90%' } }));
+    });
+    q('[data-plx]').forEach(w => {
+      const img = w.querySelector('img'); if (!img) return;
+      T.push(gsap.fromTo(img, { yPercent: -5 }, { yPercent: 5, ease: 'none', scrollTrigger: { trigger: w, scrub: true, start: 'top bottom', end: 'bottom top' } }));
+    });
+    const first = this.slides()[0];
+    if (first) {
+      const img = first.querySelector('img');
+      if (img) T.push(gsap.fromTo(img, { scale: 1.1 }, { scale: 1, duration: 2.4, ease: 'power2.out' }));
+    }
+    const lb = document.querySelector('[data-look-track]');
+    if (lb) T.push(gsap.to(lb, { x: () => -Math.max(0, lb.scrollWidth - window.innerWidth * 0.92), ease: 'none', scrollTrigger: { trigger: lb, scrub: 1, start: 'top bottom', end: 'bottom top' } }));
+    const setC = c => { const n = document.querySelector('[data-nav]'); if (n) n.style.color = c; };
+    const hero = document.querySelector('[data-navtheme="dark"]');
+    if (hero) {
+      const apply = () => setC(window.scrollY < hero.offsetHeight - 60 ? '#FFFFFF' : '#262626');
+      apply();
+      T.push(ST.create({ trigger: hero, start: 'top top', end: 'bottom 60px', onToggle: apply, onRefresh: apply, onUpdate: apply }));
+    }
+    this.startAuto();
+    ST.refresh();
+  }
+  renderVals() {
+    return {
+      showMarquee: this.props.showMarquee ?? true,
+      toggleProducts: () => this.toggleProducts(),
+      go0: () => this.goTo(0), go1: () => this.goTo(1), go2: () => this.goTo(2), go3: () => this.goTo(3)
+    };
+  }
+}
+</script>
+</body>
+</html>

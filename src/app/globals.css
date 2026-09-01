@@ -1,0 +1,175 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* -------------------------------------------------------------------------- */
+/*  ADDED FORMS brand tokens                                                  */
+/*  #262626 ink · #DAFF2B acid · #FFFFFF paper — white carries the site,      */
+/*  the acid yellow stays under 10% of the surface.                           */
+/* -------------------------------------------------------------------------- */
+
+@theme {
+  --color-ink: #262626;
+  --color-acid: #daff2b;
+  --color-paper: #ffffff;
+
+  --color-ink-70: rgb(38 38 38 / 0.7);
+  --color-ink-55: rgb(38 38 38 / 0.55);
+  --color-ink-45: rgb(38 38 38 / 0.45);
+  --color-ink-40: rgb(38 38 38 / 0.4);
+  --color-hairline: rgb(38 38 38 / 0.14);
+  --color-hairline-soft: rgb(38 38 38 / 0.1);
+  --color-shade: #f5f5f2;
+  --color-shade-deep: #f1f1ee;
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-titillium), var(--font-manrope), sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Wide editorial tracking, straight from the brand type guidelines. */
+  --tracking-brand: 0.1em;
+  --tracking-wide-brand: 0.2em;
+  --tracking-wider-brand: 0.25em;
+  --tracking-widest-brand: 0.35em;
+
+  --animate-marquee: marquee 28s linear infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  shadcn/ui tokens — scoped to the admin panel                              */
+/* -------------------------------------------------------------------------- */
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.185 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.185 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.185 0 0);
+  --primary: oklch(0.185 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.968 0 0);
+  --secondary-foreground: oklch(0.185 0 0);
+  --muted: oklch(0.968 0 0);
+  --muted-foreground: oklch(0.552 0 0);
+  --accent: oklch(0.968 0 0);
+  --accent-foreground: oklch(0.185 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.185 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.235 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.235 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.235 0 0);
+  --secondary: oklch(0.29 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.29 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.29 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.556 0 0);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Base                                                                      */
+/* -------------------------------------------------------------------------- */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-paper font-sans font-light text-ink antialiased;
+    margin: 0;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-acid);
+    color: var(--color-ink);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Only reveal-animated content starts hidden, and only when GSAP will
+     actually run — see <MotionProvider>. Without this guard a JS failure
+     would leave the page blank. */
+  html.motion-ready [data-reveal] {
+    opacity: 0;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.motion-ready [data-reveal] {
+    opacity: 1;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
