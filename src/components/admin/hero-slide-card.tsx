@@ -39,7 +39,7 @@ export function HeroSlideCard({
   slide?: HeroSlideValues;
   products: { id: string; name: string }[];
 }) {
-  const { state, onSubmit, pending } = useFormAction(saveHeroSlide);
+  const { state, pending, formProps } = useFormAction(saveHeroSlide);
   const [image, setImage] = useState<PickedImage | null>(
     slide ? { url: slide.url, alt: slide.alt, width: null, height: null } : null,
   );
@@ -52,7 +52,7 @@ export function HeroSlideCard({
   return (
     <Card>
       <CardContent>
-        <form onSubmit={onSubmit} className="flex flex-col gap-5">
+        <form {...formProps} className="flex flex-col gap-5">
           {slide && <input type="hidden" name="id" value={slide.id} />}
           <input type="hidden" name="url" value={image?.url ?? ""} />
 

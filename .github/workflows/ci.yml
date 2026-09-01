@@ -5,8 +5,30 @@ on:
     branches: [main]
   pull_request:
 
+env:
+  DATABASE_URL: postgres://postgres:postgres@localhost:5432/added_ci
+  AUTH_SECRET: ci-secret-not-used-anywhere-real
+  NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3100
+  ADMIN_EMAIL: ci@addedforms.com
+  ADMIN_PASSWORD: ci-password-placeholder
+
 jobs:
-  check:
+  static:
+    name: Typecheck, lint and unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+
+  e2e:
+    name: End-to-end
     runs-on: ubuntu-latest
 
     services:
@@ -23,36 +45,32 @@ jobs:
           --health-timeout 5s
           --health-retries 10
 
-    env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/added_ci
-      AUTH_SECRET: ci-secret-not-used-anywhere-real
-      NEXT_PUBLIC_SITE_URL: http://localhost:3000
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
       - run: npm ci
 
-      - name: Typecheck
-        run: npm run typecheck
+      - name: Install the browser Playwright is pinned to
+        run: npx playwright install --with-deps chromium
 
-      - name: Lint
-        run: npm run lint
-
-      # Proves the schema and the seed still apply to an empty database, which
-      # is the path every new deployment takes.
+      # Also proves the schema and the seed still apply to an empty database,
+      # which is the path every new deployment takes.
       - name: Migrate and seed
         run: |
           npm run db:migrate
           npm run db:seed
-        env:
-          ADMIN_EMAIL: ci@example.com
-          ADMIN_PASSWORD: ci-password-placeholder
 
-      - name: Build
-        run: npm run build
+      # playwright.config.ts builds and starts the app itself.
+      - run: npm run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

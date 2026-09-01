@@ -1,28 +1,55 @@
 "use client";
 
-import { startTransition, useActionState } from "react";
+import { useState, useTransition } from "react";
 
 import { idle, type ActionState } from "@/app/admin/_actions/types";
 
 type Action = (prev: ActionState, formData: FormData) => Promise<ActionState>;
 
 /**
- * Runs a server action from a submit handler rather than from `<form action>`.
+ * Runs a server action from a submit handler and keeps its result.
  *
- * React 19 resets a form's uncontrolled fields once its `action` resolves,
- * which is right for a "post and clear" form but wrong for an editor: a failed
- * validation would throw away everything that was typed. Dispatching the action
- * ourselves keeps the DOM values intact, and the returned `pending` replaces
- * what `useFormStatus` would have given us.
+ * `useActionState` is deliberately not used here. Bound to a form's `action`
+ * prop it resets every uncontrolled field once the action resolves — which
+ * throws away everything typed whenever a save comes back with a validation
+ * error — and in the dialogs it intermittently left `pending` stuck true after
+ * the action had already returned, so the dialog never closed and the save
+ * appeared to hang.
+ *
+ * Calling the action as a plain async function inside a transition avoids both:
+ * nothing touches the form's DOM, and `redirect()` still works because the call
+ * happens inside a transition.
  */
 export function useFormAction(action: Action, initial: ActionState = idle) {
-  const [state, dispatch, pending] = useActionState(action, initial);
+  const [state, setState] = useState<ActionState>(initial);
+  const [pending, startTransition] = useTransition();
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    startTransition(() => dispatch(formData));
+
+    startTransition(async () => {
+      try {
+        setState(await action(state, formData));
+      } catch (error) {
+        // A redirect is thrown, not returned — let Next handle it.
+        if (isRedirect(error)) throw error;
+
+        console.error(error);
+        setState({ status: "error", message: "Something went wrong. Please try again." });
+      }
+    });
   }
 
-  return { state, onSubmit, pending };
+  return { state, pending, formProps: { onSubmit } };
+}
+
+function isRedirect(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "digest" in error &&
+    typeof (error as { digest?: unknown }).digest === "string" &&
+    (error as { digest: string }).digest.startsWith("NEXT_REDIRECT")
+  );
 }

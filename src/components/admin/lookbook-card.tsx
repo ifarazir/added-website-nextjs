@@ -32,7 +32,7 @@ export type LookbookValues = {
 };
 
 export function LookbookCard({ item }: { item?: LookbookValues }) {
-  const { state, onSubmit, pending } = useFormAction(saveLookbookItem);
+  const { state, pending, formProps } = useFormAction(saveLookbookItem);
   const [image, setImage] = useState<PickedImage | null>(
     item ? { url: item.url, alt: item.alt, width: item.width, height: item.height } : null,
   );
@@ -47,7 +47,7 @@ export function LookbookCard({ item }: { item?: LookbookValues }) {
   return (
     <Card>
       <CardContent>
-        <form onSubmit={onSubmit} className="flex flex-col gap-5">
+        <form {...formProps} className="flex flex-col gap-5">
           {item && <input type="hidden" name="id" value={item.id} />}
           <input type="hidden" name="url" value={image?.url ?? ""} />
           {/* Intrinsic size keeps the strip's natural aspect ratios. */}

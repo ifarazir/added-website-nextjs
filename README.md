@@ -73,12 +73,19 @@ natural opacity — so the site is fully readable with JavaScript disabled too.
 | Lookbook | The horizontal editorial strip, with per-frame heights. |
 | Media | Upload library. Images are auto-rotated, capped at 2400px and re-encoded to WebP. |
 | Subscribers | Newsletter sign-ups from the footer. |
-| Settings | Manifesto copy, marquee, hero autoplay, contact details. |
+| Settings | Manifesto copy, collaborations copy, marquee, hero autoplay, contact details. |
+| Accounts | Add, edit and remove admin accounts. Admins only. |
 
 **Auth** is email + password: scrypt hashes in the `users` table, a signed JWT
 in an httpOnly cookie, and `middleware.ts` gating `/admin`. The middleware only
 verifies the token (it runs on the edge); the user record is loaded in the
 layout.
+
+**Roles.** `editor` runs the catalogue; `admin` can additionally manage
+accounts. The Accounts page is hidden from the nav for editors and redirects
+them away, and every action behind it goes through `requireAdmin()`. Two things
+are refused outright so the studio cannot lock itself out: deleting your own
+account, and demoting or deleting the last remaining admin.
 
 **Caching.** Public pages are dynamic — the database is not reachable at build
 time — but every read is wrapped in `unstable_cache` under the `content` tag.
@@ -116,12 +123,44 @@ npm i @aws-sdk/client-s3
 | `npm run dev` / `build` / `start` | The usual Next.js three. |
 | `npm run typecheck` | `tsc --noEmit`. |
 | `npm run lint` | ESLint 9 flat config with the Next.js rules. |
+| `npm test` | Vitest unit tests. |
+| `npm run test:e2e` | Playwright end-to-end tests (builds and starts the app itself). |
+| `npm run test:e2e:ui` | The same suite in Playwright's UI mode. |
 | `npm run db:generate` | Write a new SQL migration from `src/db/schema.ts`. |
 | `npm run db:migrate` | Apply pending migrations. |
 | `npm run db:push` | Push the schema straight to the database (development only). |
 | `npm run db:studio` | Drizzle Studio. |
 | `npm run db:seed` | Load the catalogue. Re-runnable — rows are matched on slug and updated. |
 | `npm run images:build` | Re-derive `public/images` from the raw brand photography (`SOURCE_DIR=…`). |
+
+---
+
+## Tests
+
+```bash
+npm test          # unit — fast, no database
+npm run test:e2e  # end-to-end — needs a seeded database
+```
+
+**Unit** (`tests/unit`) covers the pure logic: slug generation, password
+hashing, session signing and tampering, the rate limiter's windows, the Zod
+schemas, and the database error unwrapping.
+
+**End-to-end** (`tests/e2e`) drives a production build in a real browser: the
+public pages, the hero and its caption, category filtering, 404 status codes,
+the SEO surface, reduced motion, mobile overflow, the whole admin — sign-in,
+access control, catalogue CRUD, uploads, settings, and account management.
+
+Several tests exist because the bug they describe actually happened; those
+carry a `Regression:` comment saying what broke.
+
+The suite shares one database and one in-process rate limiter, so it runs
+serially. Tests that change data either create their own rows and delete them
+or restore what they touched, so the suite can be re-run against the same
+database.
+
+> If your machine already has a Chromium that Playwright can use, point
+> `PLAYWRIGHT_CHROMIUM_PATH` at it to skip the download.
 
 ---
 

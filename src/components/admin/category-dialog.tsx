@@ -30,7 +30,7 @@ export type CategoryValues = {
 
 export function CategoryDialog({ category }: { category?: CategoryValues }) {
   const [open, setOpen] = useState(false);
-  const { state, onSubmit, pending } = useFormAction(saveCategory);
+  const { state, pending, formProps } = useFormAction(saveCategory);
   const [name, setName] = useState(category?.name ?? "");
   const [slug, setSlug] = useState(category?.slug ?? "");
   const [slugLocked, setSlugLocked] = useState(Boolean(category));
@@ -64,7 +64,7 @@ export function CategoryDialog({ category }: { category?: CategoryValues }) {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={onSubmit} className="flex flex-col gap-5">
+        <form {...formProps} className="flex flex-col gap-5">
           {category && <input type="hidden" name="id" value={category.id} />}
 
           <Field label="Name" htmlFor="category-name" error={state.errors?.name}>

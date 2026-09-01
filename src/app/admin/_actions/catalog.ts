@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { revalidatePath, revalidateTag } from "next/cache";
 
 import { db } from "@/db";
+import { isUniqueViolation } from "@/db/errors";
 import { categories, productImages, products, productSpecs } from "@/db/schema";
 import { requireUser } from "@/lib/auth";
 import { CONTENT_TAG } from "@/lib/queries";
@@ -188,6 +189,3 @@ export async function deleteCategory(_prev: ActionState, formData: FormData): Pr
   return ok("Category deleted. Its objects are now uncategorised.");
 }
 
-function isUniqueViolation(error: unknown) {
-  return typeof error === "object" && error !== null && "code" in error && error.code === "23505";
-}

@@ -7,6 +7,7 @@ import {
   Mail,
   Package,
   Settings,
+  Users,
 } from "lucide-react";
 
 export const NAV = [
@@ -18,4 +19,5 @@ export const NAV = [
   { href: "/admin/media", label: "Media", icon: ImageIcon },
   { href: "/admin/subscribers", label: "Subscribers", icon: Mail },
   { href: "/admin/settings", label: "Settings", icon: Settings },
+  { href: "/admin/users", label: "Accounts", icon: Users, adminOnly: true },
 ] as const;

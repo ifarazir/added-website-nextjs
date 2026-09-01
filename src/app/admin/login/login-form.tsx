@@ -8,12 +8,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 export function LoginForm({ next }: { next?: string }) {
-  const { state, onSubmit, pending } = useFormAction(login);
+  const { state, pending, formProps } = useFormAction(login);
 
   return (
     <Card>
       <CardContent>
-        <form onSubmit={onSubmit} className="flex flex-col gap-5">
+        <form {...formProps} className="flex flex-col gap-5">
           <input type="hidden" name="next" value={next ?? "/admin"} />
 
           <Field label="Email" htmlFor="email" error={state.errors?.email}>

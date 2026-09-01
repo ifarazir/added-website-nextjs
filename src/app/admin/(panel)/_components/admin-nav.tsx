@@ -9,13 +9,14 @@ import { cn } from "@/lib/utils";
 
 import { NAV } from "./nav-config";
 
-export function AdminNav() {
+export function AdminNav({ role }: { role: "admin" | "editor" }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   useEffect(() => setOpen(false), [pathname]);
 
-  const links = NAV.map((item) => {
+  // Accounts is admin-only; the page itself redirects editors away too.
+  const links = NAV.filter((item) => !("adminOnly" in item && item.adminOnly) || role === "admin").map((item) => {
     const active =
       "exact" in item && item.exact ? pathname === item.href : pathname.startsWith(item.href);
     const Icon = item.icon;

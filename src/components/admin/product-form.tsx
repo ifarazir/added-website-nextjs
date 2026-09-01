@@ -70,7 +70,7 @@ export function ProductForm({
 }) {
   const initial = product ?? EMPTY;
   const router = useRouter();
-  const { state, onSubmit, pending } = useFormAction(action);
+  const { state, pending, formProps } = useFormAction(action);
 
   const [name, setName] = useState(initial.name);
   const [slug, setSlug] = useState(initial.slug);
@@ -100,7 +100,7 @@ export function ProductForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-6">
+    <form {...formProps} className="flex flex-col gap-6">
       {product?.id && <input type="hidden" name="id" value={product.id} />}
       <input type="hidden" name="images" value={JSON.stringify(images)} />
       <input type="hidden" name="specs" value={JSON.stringify(specs)} />

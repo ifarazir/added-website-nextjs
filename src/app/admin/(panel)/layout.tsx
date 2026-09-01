@@ -8,6 +8,8 @@ import { UserMenu } from "./_components/user-menu";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = { robots: { index: false, follow: false } };
+
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   // The middleware has already verified the cookie; this loads the record and
   // catches the edge case of a session whose user has since been deleted.
@@ -17,7 +19,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-screen bg-muted/40">
       <div className="mx-auto flex max-w-[1600px] flex-col lg:flex-row">
-        <AdminNav />
+        <AdminNav role={user.role} />
 
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/95 px-5 backdrop-blur">

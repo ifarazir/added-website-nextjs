@@ -1,8 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Emits .next/standalone, which is what the Dockerfile ships.
-  output: "standalone",
+  // Only the Docker build wants the standalone bundle. Leaving it on by
+  // default breaks `next start`, which warns and is not the supported way to
+  // run a standalone build.
+  output: process.env.BUILD_STANDALONE === "1" ? "standalone" : undefined,
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

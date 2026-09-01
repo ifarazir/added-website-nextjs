@@ -58,3 +58,13 @@ export async function requireUser() {
   if (!user) throw new Error("Not authenticated.");
   return user;
 }
+
+/**
+ * Guards the actions only an admin may run — everything under Users. Editors
+ * keep full control of the catalogue; they just cannot grant or revoke access.
+ */
+export async function requireAdmin() {
+  const user = await requireUser();
+  if (user.role !== "admin") throw new Error("This action needs an admin account.");
+  return user;
+}

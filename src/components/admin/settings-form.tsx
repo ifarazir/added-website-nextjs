@@ -29,14 +29,14 @@ type Values = {
 };
 
 export function SettingsForm({ settings }: { settings: Values }) {
-  const { state, onSubmit, pending } = useFormAction(saveSettings);
+  const { state, pending, formProps } = useFormAction(saveSettings);
 
   useEffect(() => {
     if (state.status === "ok") toast.success(state.message);
   }, [state]);
 
   return (
-    <form onSubmit={onSubmit} className="flex max-w-3xl flex-col gap-6">
+    <form {...formProps} className="flex max-w-3xl flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Manifesto</CardTitle>

@@ -23,6 +23,26 @@ export const passwordSchema = z
   .min(10, "Use at least 10 characters.")
   .max(200, "That is too long.");
 
+const roleSchema = z.enum(["admin", "editor"]);
+
+export const userCreateSchema = z.object({
+  name: trimmed(120).min(1, "A name is required."),
+  email: z.string().trim().min(1, "An email is required.").email("Enter a valid email address."),
+  role: roleSchema.default("editor"),
+  password: passwordSchema,
+});
+
+export const userUpdateSchema = z.object({
+  name: trimmed(120).min(1, "A name is required."),
+  email: z.string().trim().min(1, "An email is required.").email("Enter a valid email address."),
+  role: roleSchema.default("editor"),
+  /** Blank means "leave the password alone". */
+  password: z
+    .union([z.literal(""), passwordSchema])
+    .optional()
+    .transform((v) => (v ? v : undefined)),
+});
+
 export const categorySchema = z.object({
   name: trimmed(120).min(1, "A name is required."),
   slug: slugSchema,
