@@ -121,7 +121,10 @@ export default async function HomePage() {
       <section className="bg-paper pb-[12vh] text-ink">
         {settings.showMarquee && settings.marqueeText && <Marquee text={settings.marqueeText} />}
 
-        <div className="px-[6vw] pt-[12vh] md:px-[3vw]">
+        {/* Indented past the header's corner mark, which floats over this
+            band at every scroll position and would otherwise sit on top of the
+            first column's links. */}
+        <div className="px-[6vw] pt-[12vh] md:pr-[3vw] md:pl-[9vw]">
           <h2
             data-reveal
             className="mb-[8vh] font-display text-[clamp(28px,3.4vw,60px)] leading-none font-semibold tracking-[0.08em] uppercase"

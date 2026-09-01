@@ -191,18 +191,27 @@ const PRODUCTS: SeedProduct[] = [
   },
 ];
 
+/**
+ * The hero runs full-bleed, so it only ever uses the 3122px originals. The
+ * frames the design mocked up with (donut-in-hand, jooje in sand, the UFO
+ * colander, the jooje sphere) exist solely as ~1000px extracts from the brand
+ * PDF — no larger copy exists in the handoff — and were visibly soft at this
+ * size. They are still attached to their own objects, where a card-sized crop
+ * holds up. Swap them back in from the admin the moment the originals arrive.
+ */
 const HERO = [
-  { key: "donut-hand" as ImageKey, caption: "Donut — mirror-polished stainless steel", product: "donut", alt: "Donut object held in hand" },
-  { key: "jooje-sand" as ImageKey, caption: "Jooje — cast aluminium, sand-finished", product: "jooje", alt: "Jooje object in sand" },
-  { key: "ufo-colander" as ImageKey, caption: "UFO Colander — brushed stainless steel", product: "ufo", alt: "Stainless colander in use" },
-  { key: "jooje-sphere" as ImageKey, caption: "Jooje — mirror sphere, studio still", product: "jooje", alt: "Mirror sphere on painted paper" },
+  { key: "donut" as ImageKey, caption: "Donut — mirror-polished stainless steel", product: "donut", alt: "Donut object resting on white stone" },
+  { key: "wireframe" as ImageKey, caption: "Wireframe — bent stainless rod", product: "wireframe", alt: "Wireframe stand beside a chair" },
+  { key: "lior-comb" as ImageKey, caption: "Lior Comb — cut from a single sheet", product: "lior-comb", alt: "Lior comb held against the hair" },
+  { key: "st-table" as ImageKey, caption: "St Table — mirror-polished stainless steel", product: "st-table", alt: "St Table in a living room" },
 ];
 
+// Same rule as the hero: the strip runs up to 58vh tall, so originals only.
 const LOOKBOOK: { key: ImageKey; size: "small" | "medium" | "large"; alt: string }[] = [
   { key: "lior-comb", size: "large", alt: "Comb editorial" },
-  { key: "donut-hand", size: "small", alt: "Donut in hand" },
+  { key: "donut", size: "small", alt: "Donut on stone" },
   { key: "wireframe", size: "large", alt: "Wireframe stand editorial" },
-  { key: "jooje-sand", size: "small", alt: "Jooje in sand" },
+  { key: "st-table", size: "small", alt: "St Table editorial" },
   { key: "modular-shelf", size: "medium", alt: "Modular shelf editorial" },
 ];
 

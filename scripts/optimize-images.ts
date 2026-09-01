@@ -16,36 +16,61 @@ const SOURCE_DIR =
   process.env.SOURCE_DIR ?? path.resolve(process.cwd(), "../repo/project/uploads");
 const OUT_DIR = path.resolve(process.cwd(), "public/images");
 
-/** source file -> published slug */
-const MAP: Record<string, string> = {
-  "web-donut-hand.jpg": "donut-hand",
-  "web-jooje-sand.jpg": "jooje-sand",
-  "web-colander.jpg": "ufo-colander",
-  "web-jooje-paint.jpg": "jooje-sphere",
-  "comb-editorial.png": "lior-comb",
-  "Asset 1.jpg": "modular-shelf",
-  "Asset 2.jpg": "wireframe",
-  "Asset 4.jpg": "donut",
-  "Asset 5.jpg": "st-table",
+type Source = {
+  slug: string;
+  /** Pixels to trim off the right edge before anything else. */
+  trimRight?: number;
 };
 
-const MAX_WIDTH = 2400;
+/** source file -> how it gets published */
+const MAP: Record<string, Source> = {
+  "web-donut-hand.jpg": { slug: "donut-hand" },
+  "web-jooje-sand.jpg": { slug: "jooje-sand" },
+  "web-colander.jpg": { slug: "ufo-colander" },
+  "web-jooje-paint.jpg": { slug: "jooje-sphere" },
+  // This one is a screenshot of an Instagram post and carries the carousel's
+  // next-arrow baked into the right edge. Trimmed off before publishing.
+  "comb-editorial.png": { slug: "lior-comb", trimRight: 80 },
+  "Asset 1.jpg": { slug: "modular-shelf" },
+  "Asset 2.jpg": { slug: "wireframe" },
+  "Asset 4.jpg": { slug: "donut" },
+  "Asset 5.jpg": { slug: "st-table" },
+};
+
+// The originals are 3122px wide and are used full-bleed in the hero, which on
+// a 1440px viewport at 2x needs ~2880px. Nothing is ever enlarged past its
+// source, so the PDF-derived frames stay at their native ~1000px.
+const MAX_WIDTH = 3200;
 
 async function main() {
   await mkdir(OUT_DIR, { recursive: true });
   const available = new Set(await readdir(SOURCE_DIR));
   const manifest: Record<string, { width: number; height: number; blur: string }> = {};
 
-  for (const [file, slug] of Object.entries(MAP)) {
+  for (const [file, source] of Object.entries(MAP)) {
+    const { slug, trimRight = 0 } = source;
+
     if (!available.has(file)) {
       console.warn(`! missing source: ${file}`);
       continue;
     }
     const input = path.join(SOURCE_DIR, file);
     const meta = await sharp(input).metadata();
-    const width = Math.min(meta.width ?? MAX_WIDTH, MAX_WIDTH);
+    const sourceWidth = (meta.width ?? MAX_WIDTH) - trimRight;
+    const width = Math.min(sourceWidth, MAX_WIDTH);
 
-    const pipeline = () => sharp(input).rotate().resize({ width, withoutEnlargement: true });
+    const pipeline = () => {
+      const base = sharp(input).rotate();
+      if (trimRight) {
+        base.extract({
+          left: 0,
+          top: 0,
+          width: sourceWidth,
+          height: meta.height ?? 0,
+        });
+      }
+      return base.resize({ width, withoutEnlargement: true });
+    };
 
     // One JPEG source per image: next/image negotiates AVIF/WebP per request,
     // so shipping extra formats would only double the repository weight.
@@ -54,7 +79,7 @@ async function main() {
       .toFile(path.join(OUT_DIR, `${slug}.jpg`));
 
     // 20px blur placeholder, inlined as a data URI in the image manifest.
-    const blur = await sharp(input).resize({ width: 20 }).webp({ quality: 40 }).toBuffer();
+    const blur = await pipeline().resize({ width: 20 }).webp({ quality: 40 }).toBuffer();
 
     manifest[slug] = {
       width: jpg.width,

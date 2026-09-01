@@ -148,9 +148,23 @@ src/
 
 ## Notes for whoever picks this up
 
-- **Product photography.** The four hero frames were extracted from a brand PDF
-  at about 1000px and are soft on large screens. Upload the originals through
-  **Media** and repoint the hero slides — no code change.
+- **Product photography.** Four originals exist at 3122×3467 (Donut, Wireframe,
+  St Table, Modular Shelf) plus the Lior Comb at 1378×1822, and those are the
+  only images used anywhere they run full-bleed — the hero and the lookbook.
+
+  The four frames the design mocked up the hero with — the donut in hand, the
+  jooje in sand, the UFO colander, the jooje sphere — exist **only** at roughly
+  1000px. There is no larger copy in the handoff: the `uploads/` folder, the
+  image streams embedded in both brand PDFs, and the asset bundle inside the
+  standalone HTML export all carry the same ~1000px versions. They are still
+  attached to their own objects, where a card-sized crop holds up, and the UFO
+  and Jooje have no other photography at all. Send those originals and they can
+  go back into the hero from **Hero slides** — no code change.
+
+- **The Lior Comb source is a screenshot of an Instagram post** and had the
+  carousel's next-arrow baked into its right edge. `scripts/optimize-images.ts`
+  trims 80px off that edge; replace the file with a clean original and the trim
+  can go.
 - **Objects without photos** render a diagonal-striped placeholder rather than
   an empty box. Six of the fourteen seeded objects are in that state.
 - **Specs are placeholders** for everything except the Donut. They are rows in

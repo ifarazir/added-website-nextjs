@@ -35,6 +35,8 @@ export function HeroSlider({
   const reduced = useRef(false);
   const gsapRef = useRef<typeof import("gsap").gsap | null>(null);
   const rootRef = useRef<HTMLElement>(null);
+  /** The slide currently painted, so the effect knows what to fade out. */
+  const shownRef = useRef(0);
 
   useEffect(() => {
     reduced.current = prefersReducedMotion();
@@ -54,28 +56,38 @@ export function HeroSlider({
   const goTo = useCallback(
     (next: number) => {
       if (slides.length < 2) return;
-      const target = (next + slides.length) % slides.length;
-
       setIndex((current) => {
-        if (target === current) return current;
-
-        const gsap = gsapRef.current;
-        const root = rootRef.current;
-        if (gsap && root && !reduced.current) {
-          const from = root.querySelector<HTMLElement>(`[data-slide="${current}"]`);
-          const to = root.querySelector<HTMLElement>(`[data-slide="${target}"]`);
-          if (from) gsap.to(from, { opacity: 0, duration: 1.1, ease: "power2.inOut" });
-          if (to) {
-            gsap.fromTo(to, { opacity: 0 }, { opacity: 1, duration: 1.1, ease: "power2.inOut" });
-            const img = to.querySelector("img");
-            if (img) gsap.fromTo(img, { scale: 1.07 }, { scale: 1, duration: 7, ease: "power1.out" });
-          }
-        }
-        return target;
+        const target = (next + slides.length) % slides.length;
+        return target === current ? current : target;
       });
     },
     [slides.length],
   );
+
+  // The crossfade is driven by the committed index rather than from inside the
+  // state updater: React is free to call an updater more than once, which ran
+  // the animation for a transition that was never committed and left the
+  // caption a slide ahead of the photograph.
+  useEffect(() => {
+    const previous = shownRef.current;
+    shownRef.current = index;
+
+    if (previous === index) return;
+
+    const gsap = gsapRef.current;
+    const root = rootRef.current;
+    if (!gsap || !root || reduced.current) return;
+
+    const from = root.querySelector<HTMLElement>(`[data-slide="${previous}"]`);
+    const to = root.querySelector<HTMLElement>(`[data-slide="${index}"]`);
+
+    if (from) gsap.to(from, { opacity: 0, duration: 1.1, ease: "power2.inOut" });
+    if (to) {
+      gsap.fromTo(to, { opacity: 0 }, { opacity: 1, duration: 1.1, ease: "power2.inOut" });
+      const img = to.querySelector("img");
+      if (img) gsap.fromTo(img, { scale: 1.07 }, { scale: 1, duration: 7, ease: "power1.out" });
+    }
+  }, [index]);
 
   useEffect(() => {
     if (!autoplay || slides.length < 2 || reduced.current) return;
