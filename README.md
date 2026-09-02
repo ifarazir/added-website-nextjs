@@ -46,11 +46,24 @@ your `.env`. Change the password from **Account** once you are in.
 | --- | --- |
 | `/` | Hero slideshow, manifesto, masonry of selected objects, marquee + category index, scrubbing lookbook strip. |
 | `/collection` | Every published object. `?category=<slug>` filters, and the URL is shareable. |
-| `/product/<slug>` | Scrolling image column against a sticky details panel, specs, enquiry link, related objects. |
+| `/product/<slug>` | Scrolling image column against a sticky details panel, specs, enquiry link, related objects. Any image opens full screen. |
+| `/search` | Searches the catalogue by object, material and category name. |
 
 Three colours carry the whole thing — `#262626` ink, `#DAFF2B` acid, white —
 with white on 80%+ of the surface and the acid yellow held under 10%.
 Titillium Web sets large headings; Manrope does everything else.
+
+### Search
+
+`searchProducts` in `src/lib/queries.ts` is a case-insensitive `LIKE` across the
+name, material, summary and description, plus the object's category name.
+Deliberately plain: the catalogue is small, so this needs no extension, no index
+to maintain and no ranking to tune. LIKE wildcards in the term are escaped, so
+searching for `1/4` or `50%` behaves. Past a few hundred objects the next step
+is a generated `tsvector` column with a GIN index rather than a cleverer LIKE.
+
+Results are not cached — the term is unbounded, and caching per term would fill
+the cache with single-use entries — and the page is `noindex`.
 
 ### Motion
 
@@ -258,6 +271,8 @@ src/
   an empty box. Six of the fourteen seeded objects are in that state.
 - **Specs are placeholders** for everything except the Donut. They are rows in
   `product_specs`, editable per object.
-- **Search and Log In** in the header are `#` anchors, matching the design.
-  There is no storefront: the site shows no prices and every call to action is
-  an enquiry email.
+- **LOG IN in the header is still a `#` placeholder.** It came from the brand
+  design, and the site has no customer accounts — there is no storefront, no
+  prices, and every call to action is an enquiry email. Either wire it up or
+  drop it; the anchor test names it explicitly, so a *second* dead anchor will
+  fail the build while this one stays a deliberate choice.

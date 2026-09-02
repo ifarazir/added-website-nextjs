@@ -39,10 +39,10 @@ test.describe("home", () => {
     // Regression: the header and footer linked to #collaborations before any
     // element carried that id.
     //
-    // SEARCH and LOG IN are placeholders carried over from the brand design —
-    // the site has no search and no customer accounts. They are listed here so
-    // the test still fails if a *third* dead anchor appears.
-    const PLACEHOLDERS = new Set(["search", "login"]);
+    // LOG IN is the one placeholder left from the brand design — the site has
+    // no customer accounts. It is named here so the test still fails if a
+    // second dead anchor appears.
+    const PLACEHOLDERS = new Set(["login"]);
 
     await page.goto("/");
     const hrefs = await page.locator('a[href^="/#"], a[href^="#"]').evaluateAll((links) =>
@@ -61,6 +61,106 @@ test.describe("home", () => {
     for (const id of PLACEHOLDERS) {
       expect([...ids], `${id} placeholder should still be in the header`).toContain(id);
     }
+  });
+});
+
+test.describe("search", () => {
+  test("the header link opens the search page", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "Search" }).click();
+
+    await expect(page).toHaveURL(/\/search$/);
+    await expect(page.getByRole("searchbox")).toBeFocused();
+  });
+
+  test("a term finds objects and survives a reload", async ({ page }) => {
+    await page.goto("/search");
+    await page.getByRole("searchbox").fill("steel");
+    await page.getByRole("button", { name: "Search" }).click();
+
+    await expect(page).toHaveURL(/\/search\?q=steel/);
+    const found = await page.locator('main a[href^="/product/"]').count();
+    expect(found).toBeGreaterThan(0);
+
+    // The result page is a real URL, so it can be shared and reloaded.
+    await page.reload();
+    await expect(page.locator('main a[href^="/product/"]')).toHaveCount(found);
+    await expect(page.getByRole("searchbox")).toHaveValue("steel");
+  });
+
+  test("a category name matches its objects", async ({ page }) => {
+    // Regression: this went through a hand-written EXISTS subquery that the
+    // relational query builder aliased away, so category terms found nothing.
+    await page.goto("/search?q=decorative");
+
+    const found = await page.locator('main a[href^="/product/"]').count();
+    expect(found).toBeGreaterThan(0);
+    await expect(page.locator('main a[href="/product/donut"]')).toBeVisible();
+  });
+
+  test("wildcards are escaped rather than matching everything", async ({ page }) => {
+    await page.goto("/search?q=%25%25");
+    await expect(page.getByText(/nothing matches/i)).toBeVisible();
+
+    // A slug that genuinely contains a slash still resolves.
+    await page.goto("/search?q=1%2F4");
+    await expect(page.locator('main a[href="/product/quarter"]')).toBeVisible();
+  });
+
+  test("a single character asks for more, and nothing matched says so", async ({ page }) => {
+    await page.goto("/search?q=a");
+    await expect(page.getByText(/at least two characters/i)).toBeVisible();
+
+    await page.goto("/search?q=zzzznothing");
+    await expect(page.getByText(/nothing matches/i)).toBeVisible();
+    await expect(page.getByRole("link", { name: /browse the whole collection/i })).toBeVisible();
+  });
+
+  test("results are not indexed", async ({ page }) => {
+    await page.goto("/search?q=steel");
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  });
+});
+
+test.describe("product gallery", () => {
+  test("an image opens full screen and can be stepped through and closed", async ({ page }) => {
+    await page.goto("/product/donut");
+
+    await page.locator('button[aria-label*="full screen"]').first().click();
+    const viewer = page.getByRole("dialog");
+    await expect(viewer).toBeVisible();
+    await expect(viewer).toContainText("01 / 02");
+
+    await page.getByRole("button", { name: /next/i }).click();
+    await expect(viewer).toContainText("02 / 02");
+
+    // Wraps around rather than dead-ending.
+    await page.getByRole("button", { name: /next/i }).click();
+    await expect(viewer).toContainText("01 / 02");
+
+    await page.keyboard.press("ArrowLeft");
+    await expect(viewer).toContainText("02 / 02");
+
+    await page.keyboard.press("Escape");
+    await expect(viewer).toHaveCount(0);
+  });
+
+  test("an object with one image has no stepper", async ({ page }) => {
+    await page.goto("/product/wireframe");
+    await page.locator('button[aria-label*="full screen"]').first().click();
+
+    const viewer = page.getByRole("dialog");
+    await expect(viewer).toBeVisible();
+    await expect(page.getByRole("button", { name: /next/i })).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Close" }).click();
+    await expect(viewer).toHaveCount(0);
+  });
+
+  test("an object with no photography shows the placeholder instead", async ({ page }) => {
+    await page.goto("/product/mirror");
+    await expect(page.getByText(/product shot — mirror/i)).toBeVisible();
+    await expect(page.locator('button[aria-label*="full screen"]')).toHaveCount(0);
   });
 });
 

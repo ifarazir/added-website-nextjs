@@ -125,9 +125,9 @@ export function SiteHeader({ groups, phone, instagram }: Props) {
       </div>
 
       <nav className="pointer-events-auto absolute top-[8.5vh] right-[4vw] flex flex-col items-end gap-[1.4vh] text-right text-[9px] font-light tracking-widest-brand uppercase md:right-[1.4vw] md:gap-[1.9vh] md:text-[11px]">
-        <a href="#search" className={bar}>
+        <Link href="/search" className={bar}>
           Search
-        </a>
+        </Link>
         <a href="#login" className={bar}>
           Log In
         </a>

@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Eyebrow } from "@/components/site/eyebrow";
-import { PlaceholderTile } from "@/components/site/placeholder-tile";
 import { ProductCard } from "@/components/site/product-card";
+import { ProductGallery } from "@/components/site/product-gallery";
 import {
   breadcrumbSchema,
   productSchema,
@@ -46,7 +45,6 @@ export default async function ProductPage({ params }: Params) {
     getSettings(),
   ]);
 
-  const [lead, ...rest] = product.images;
   const subject = encodeURIComponent(`Enquiry — ${product.name}`);
 
   return (
@@ -55,35 +53,18 @@ export default async function ProductPage({ params }: Params) {
       <StructuredData data={breadcrumbSchema(product)} />
 
       <section className="grid grid-cols-1 items-start bg-paper lg:grid-cols-[1.15fr_1fr]">
-        {/* Image column — scrolls past the sticky details. */}
-        <div className="flex flex-col gap-0.5">
-          <div className="relative h-[60vh] overflow-hidden bg-shade lg:h-screen">
-            {lead ? (
-              <Image
-                src={lead.url}
-                alt={lead.alt ?? product.name}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 55vw"
-                className="object-cover"
-              />
-            ) : (
-              <PlaceholderTile label={product.name} />
-            )}
-          </div>
-
-          {rest.map((image) => (
-            <div key={image.id} data-plx className="relative h-[50vh] overflow-hidden bg-shade lg:h-[70vh]">
-              <Image
-                src={image.url}
-                alt={image.alt ?? product.name}
-                fill
-                sizes="(max-width: 1024px) 100vw, 55vw"
-                className="object-cover"
-              />
-            </div>
-          ))}
-        </div>
+        {/* Image column — scrolls past the sticky details, and opens full
+            screen on click. */}
+        <ProductGallery
+          productName={product.name}
+          images={product.images.map((image) => ({
+            id: image.id,
+            url: image.url,
+            alt: image.alt,
+            width: image.width,
+            height: image.height,
+          }))}
+        />
 
         {/* Details — sticky on desktop, stacked underneath on smaller screens. */}
         <div className="box-border flex min-h-screen flex-col px-[6vw] pt-[10vh] pb-[8vh] lg:sticky lg:top-0 lg:pt-[16vh] lg:pr-[13vw] lg:pl-[4vw]">

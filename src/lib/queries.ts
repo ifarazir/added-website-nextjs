@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, ne } from "drizzle-orm";
+import { and, asc, eq, ilike, inArray, ne, or } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 
 import { db } from "@/db";
@@ -172,5 +172,55 @@ export function getNavGroups() {
         href: `/product/${product.slug}`,
       })),
     }));
+  });
+}
+
+
+/**
+ * Catalogue search.
+ *
+ * Deliberately a simple case-insensitive LIKE across the fields a visitor would
+ * actually type — the catalogue is small and this needs no extension, no index
+ * maintenance and no ranking to tune. If it grows past a few hundred objects,
+ * the next step is a generated tsvector column with a GIN index rather than a
+ * cleverer LIKE.
+ *
+ * Not cached: the query string is unbounded, so caching per term would fill the
+ * cache with single-use entries.
+ */
+export async function searchProducts(term: string) {
+  const query = term.trim();
+  if (query.length < 2) return [];
+
+  // Escape the LIKE wildcards so a search for "1/4" or "50%" behaves.
+  const pattern = `%${query.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+
+  // Matching categories are resolved first rather than with a correlated
+  // subquery: the relational query builder aliases its tables, so a hand-written
+  // EXISTS against `products` silently matched nothing.
+  const matchingCategories = await db
+    .select({ id: categories.id })
+    .from(categories)
+    .where(ilike(categories.name, pattern));
+
+  const categoryIds = matchingCategories.map((row) => row.id);
+
+  return db.query.products.findMany({
+    where: and(
+      eq(products.published, true),
+      or(
+        ilike(products.name, pattern),
+        ilike(products.material, pattern),
+        ilike(products.summary, pattern),
+        ilike(products.description, pattern),
+        ...(categoryIds.length > 0 ? [inArray(products.categoryId, categoryIds)] : []),
+      ),
+    ),
+    orderBy: [asc(products.position), asc(products.name)],
+    limit: 60,
+    with: {
+      category: true,
+      images: { orderBy: (i, { asc: a }) => [a(i.position)], limit: 1 },
+    },
   });
 }
