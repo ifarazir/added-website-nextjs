@@ -190,7 +190,11 @@ database without dragging its own fixtures into real pages.
 
 - `app/sitemap.ts` lists the homepage, the collection, every category filter and
   every published product, with `lastModified` from the database.
-- `app/robots.ts` allows everything except `/admin` and `/uploads/`.
+- `app/robots.ts` allows everything except `/admin` and `/uploads/` — but only
+  on the real domain. On a `*.vercel.app` host it disallows everything, so a
+  client-review deployment cannot compete with the live site in search results
+  or turn up in them at all. Indexing switches on as soon as
+  `NEXT_PUBLIC_SITE_URL` points at the real domain.
 - Product pages emit `Product` and `BreadcrumbList` JSON-LD; the homepage emits
   `Organization`. No `offers` block — the studio publishes no prices, and a
   fabricated one would be worse than none.
