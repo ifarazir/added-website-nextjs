@@ -5,6 +5,8 @@ const baseURL = `http://127.0.0.1:${PORT}`;
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  // Clears rows left behind by a test that failed before its own cleanup.
+  globalTeardown: "./tests/e2e/global-teardown.ts",
   // The suite shares one database and one in-process rate limiter, so it runs
   // serially rather than fighting itself.
   fullyParallel: false,

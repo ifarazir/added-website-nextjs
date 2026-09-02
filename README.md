@@ -169,8 +169,9 @@ carry a `Regression:` comment saying what broke.
 
 The suite shares one database and one in-process rate limiter, so it runs
 serially. Tests that change data either create their own rows and delete them
-or restore what they touched, so the suite can be re-run against the same
-database.
+or restore what they touched, and a global teardown sweeps up anything a test
+that failed part-way left behind — so the suite can be re-run against the same
+database without dragging its own fixtures into real pages.
 
 > If your machine already has a Chromium that Playwright can use, point
 > `PLAYWRIGHT_CHROMIUM_PATH` at it to skip the download.
