@@ -35,6 +35,7 @@ your `.env`. Change the password from **Account** once you are in.
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Read once by `db:seed` to create the first admin. |
 | `STORAGE_DRIVER` | `local` (default) or `s3`. |
 | `UPLOAD_DIR` | Where the local driver writes. Defaults to `./uploads`. |
+| `BLOB_READ_WRITE_TOKEN` | Injected by Vercel when a Blob store is connected; selects the `blob` driver on its own. |
 | `S3_*` | Bucket, region, endpoint and keys for the `s3` driver. |
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin, used for metadata. |
 
@@ -109,7 +110,13 @@ without the site hammering the connection pool.
 
 ## Media storage
 
-`STORAGE_DRIVER=local` writes to `UPLOAD_DIR` and serves the files through
+Three drivers, chosen by `STORAGE_DRIVER`: `local`, `blob` (Vercel Blob) and
+`s3` (any S3-compatible bucket). With nothing set it picks `blob` when a
+`BLOB_READ_WRITE_TOKEN` is present and `local` otherwise — so a Vercel
+deployment does not silently write files to a filesystem that is about to
+disappear.
+
+`local` writes to `UPLOAD_DIR` and serves the files through
 `app/uploads/[...path]/route.ts`.
 
 > Uploads deliberately do **not** live in `public/`. Next.js maps that
@@ -117,8 +124,8 @@ without the site hammering the connection pool.
 > until the next restart. Serving them from a route handler also makes
 > `UPLOAD_DIR` easy to mount as a volume.
 
-For a platform with an ephemeral filesystem (Vercel, most container hosts),
-switch to object storage:
+On Vercel, connect a Blob store to the project and nothing else is needed. For
+any other S3-compatible bucket:
 
 ```bash
 npm i @aws-sdk/client-s3
@@ -143,7 +150,8 @@ npm i @aws-sdk/client-s3
 | `npm run db:migrate` | Apply pending migrations. |
 | `npm run db:push` | Push the schema straight to the database (development only). |
 | `npm run db:studio` | Drizzle Studio. |
-| `npm run db:seed` | Load the catalogue. Re-runnable — rows are matched on slug and updated. |
+| `npm run db:seed` | Load the catalogue. Re-runnable — rows are matched on slug and updated. Add `-- --if-empty` to leave a populated catalogue alone. |
+| `npm run db:setup` | Migrate, then seed only if the catalogue is empty. What a fresh deployment runs. |
 | `npm run images:build` | Re-derive `public/images` from the raw brand photography (`SOURCE_DIR=…`). |
 
 ---
@@ -222,8 +230,23 @@ npm run db:migrate            # against the production DATABASE_URL
 docker run -p 3000:3000 --env-file .env -v added-uploads:/data/uploads added-website
 ```
 
-`.github/workflows/ci.yml` runs typecheck, lint, a migrate-and-seed against a
-throwaway PostgreSQL service, and a build on every push and pull request.
+### Vercel
+
+1. Import the repository as a Vercel project.
+2. Add a PostgreSQL store from the Marketplace — Neon has a free plan that is
+   enough for a review deployment — and connect it to the project. It sets
+   `DATABASE_URL` itself.
+3. Add a Blob store if the studio will upload photography through the admin.
+   It sets `BLOB_READ_WRITE_TOKEN`, and the storage driver picks it up.
+4. Set the remaining variables: `AUTH_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`
+   and `NEXT_PUBLIC_SITE_URL`.
+5. Deploy. The build runs `npm run vercel-build`, which migrates and seeds an
+   empty catalogue before building — so the first deployment comes up with
+   content, and later deployments leave the studio's edits alone.
+
+`.github/workflows/ci.yml` runs typecheck, lint and unit tests in one job and
+the end-to-end suite against a throwaway PostgreSQL service in another, on
+every push and pull request.
 
 ---
 

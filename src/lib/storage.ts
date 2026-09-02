@@ -50,10 +50,7 @@ export async function saveUpload(file: File): Promise<StoredFile> {
   const base = slugify(file.name.replace(/\.[^.]+$/, "")) || "image";
   const filename = `${base}-${Date.now().toString(36)}.webp`;
 
-  const url =
-    driver() === "s3"
-      ? await putToS3(filename, processed.data)
-      : await putToDisk(filename, processed.data);
+  const url = await put(driver(), filename, processed.data);
 
   return {
     url,
@@ -65,8 +62,45 @@ export async function saveUpload(file: File): Promise<StoredFile> {
   };
 }
 
-function driver() {
-  return process.env.STORAGE_DRIVER === "s3" ? "s3" : "local";
+type Driver = "local" | "blob" | "s3";
+
+function driver(): Driver {
+  const configured = process.env.STORAGE_DRIVER;
+  if (configured === "s3" || configured === "blob" || configured === "local") return configured;
+
+  // Vercel's filesystem is ephemeral, so a deployment that has a Blob token but
+  // no explicit choice would otherwise write files that vanish on redeploy.
+  return process.env.BLOB_READ_WRITE_TOKEN ? "blob" : "local";
+}
+
+function put(target: Driver, filename: string, data: Buffer) {
+  if (target === "s3") return putToS3(filename, data);
+  if (target === "blob") return putToBlob(filename, data);
+  return putToDisk(filename, data);
+}
+
+/**
+ * Vercel Blob. The token is injected automatically once a Blob store is
+ * connected to the project, so nothing else needs configuring.
+ */
+async function putToBlob(filename: string, data: Buffer) {
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!token) {
+    throw new UploadError(
+      "STORAGE_DRIVER is \"blob\" but BLOB_READ_WRITE_TOKEN is not set. Connect a Blob store to the project.",
+    );
+  }
+
+  const { put: putBlob } = await import("@vercel/blob");
+  const result = await putBlob(`media/${filename}`, data, {
+    access: "public",
+    contentType: "image/webp",
+    token,
+    // The filename already carries a unique suffix.
+    addRandomSuffix: false,
+  });
+
+  return result.url;
 }
 
 /**

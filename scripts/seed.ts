@@ -215,12 +215,26 @@ const LOOKBOOK: { key: ImageKey; size: "small" | "medium" | "large"; alt: string
   { key: "modular-shelf", size: "medium", alt: "Modular shelf editorial" },
 ];
 
-async function main() {
+/**
+ * @param ifEmpty  Skip entirely when the catalogue already has objects. Used by
+ *                 the deployment setup step, so a redeploy cannot overwrite
+ *                 whatever the studio has since edited.
+ */
+export async function seed({ ifEmpty = false } = {}) {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set.");
 
   const client = postgres(url, { max: 1 });
   const db = drizzle(client, { schema, casing: "snake_case" });
+
+  if (ifEmpty) {
+    const existing = await db.select({ id: schema.products.id }).from(schema.products).limit(1);
+    if (existing.length > 0) {
+      console.log("· catalogue already has objects — seed skipped");
+      await client.end();
+      return;
+    }
+  }
 
   /* ---- admin ---------------------------------------------------------- */
   const email = process.env.ADMIN_EMAIL ?? "admin@addedforms.com";
@@ -367,7 +381,5 @@ async function main() {
   console.log("\nSeed complete.");
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// No side effects on import — scripts/seed-cli.ts is the entry point, and
+// setup.ts calls seed() itself after the migrations have run.

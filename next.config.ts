@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
       // Enable when the S3/R2 storage driver is switched on.
       { protocol: "https", hostname: "**.amazonaws.com" },
       { protocol: "https", hostname: "**.r2.dev" },
+      // Vercel Blob, used when a Blob store is connected to the project.
+      { protocol: "https", hostname: "**.public.blob.vercel-storage.com" },
     ],
   },
   experimental: {
