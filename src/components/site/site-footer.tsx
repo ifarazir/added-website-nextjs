@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 import type { Settings } from "@/lib/queries";
+import { cn } from "@/lib/utils";
 
-import { NewsletterForm } from "./newsletter-form";
 import { Wordmark } from "./wordmark";
 
 /** Light and minimal — the only heavy block on the page is the marquee. */
@@ -17,9 +17,9 @@ export function SiteFooter({ settings }: { settings: Settings }) {
       className="scroll-mt-[32vh] border-t border-hairline bg-paper px-[6vw] pt-[7vh] pb-[3vh] md:pr-[3vw] md:pl-[9vw]"
     >
       <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 md:grid-cols-[1.6fr_1fr_1fr_1fr] md:gap-x-[3vw] md:gap-y-0">
-        <NewsletterForm />
-
-        <div className={column}>
+        {/* The columns keep the first track empty, where the newsletter sign-up
+            used to sit, so the footer still reads from the middle out. */}
+        <div className={cn(column, "md:col-start-2")}>
           <span className={heading}>Products</span>
           <Link href="/collection">Collection</Link>
           <Link href="/collection?category=decorative-objects">Objects</Link>
@@ -29,8 +29,14 @@ export function SiteFooter({ settings }: { settings: Settings }) {
         <div className={column}>
           <span className={heading}>Studio</span>
           <Link href="/#about">About</Link>
-          <Link href="/#collaborations">Collaborations</Link>
           <Link href="/#contact">Contact Us</Link>
+          {settings.email && (
+            <a
+              href={`mailto:${settings.email}?subject=${encodeURIComponent("Collaboration enquiry")}`}
+            >
+              Collaborations
+            </a>
+          )}
         </div>
 
         <div className={column}>

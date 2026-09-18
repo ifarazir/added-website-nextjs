@@ -21,12 +21,16 @@ export function Wordmark({ className }: { className?: string }) {
   );
 }
 
-/** The two stacked blocks used as the corner mark in the header. */
+/**
+ * The two stacked blocks used as the corner mark in the header. Both are the
+ * same square, as on the brand's own page — sizing them off the width alone
+ * keeps them square whatever the window's proportions.
+ */
 export function LogoBlocks({ className }: { className?: string }) {
   return (
-    <span className={cn("flex w-[13vw] flex-col gap-1.5 md:w-[4.4vw]", className)}>
-      <span className="block h-[5vh] bg-current md:h-[7vh]" />
-      <span className="block h-[5.4vh] bg-current md:h-[7.6vh]" />
+    <span className={cn("flex w-[10vw] flex-col gap-1.5 md:w-[4.4vw]", className)}>
+      <span className="block aspect-square bg-current" />
+      <span className="block aspect-square bg-current" />
     </span>
   );
 }

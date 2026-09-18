@@ -16,6 +16,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         groups={groups}
         phone={settings.phone ?? ""}
         instagram={settings.instagram ?? "AddedForms"}
+        email={settings.email ?? ""}
       />
       <main>{children}</main>
       <SiteFooter settings={settings} />

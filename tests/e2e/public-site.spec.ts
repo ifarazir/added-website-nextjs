@@ -1,14 +1,18 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("home", () => {
-  test("renders the hero, the manifesto and the catalogue sections", async ({ page }) => {
+  test("renders the hero and the manifesto, and nothing after them", async ({ page }) => {
     await page.goto("/");
 
     await expect(page.locator("section[data-hero]")).toBeVisible();
     await expect(page.getByRole("heading", { name: /we add form to material/i })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Selected objects" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Index", exact: true })).toBeVisible();
-    await expect(page.locator("#collaborations")).toBeAttached();
+
+    // The catalogue sections were folded away to keep the page short; the
+    // objects are reached through the PRODUCTS menu and /collection instead.
+    await expect(page.getByRole("heading", { name: "Selected objects" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Index", exact: true })).toHaveCount(0);
+    await expect(page.locator("#collaborations")).toHaveCount(0);
+    await expect(page.locator("#newsletter-email")).toHaveCount(0);
   });
 
   test("the hero caption always names the slide that is actually showing", async ({ page }) => {
@@ -37,7 +41,7 @@ test.describe("home", () => {
 
   test("every in-page anchor resolves to a section", async ({ page }) => {
     // Regression: the header and footer linked to #collaborations before any
-    // element carried that id.
+    // element carried that id, and again after the section was removed.
     //
     // LOG IN is the one placeholder left from the brand design — the site has
     // no customer accounts. It is named here so the test still fails if a
@@ -269,30 +273,6 @@ test.describe("SEO surface", () => {
     const body = await (await request.get("/sitemap.xml")).text();
     expect(body).toContain("/collection");
     expect(body).toContain("/product/donut");
-  });
-});
-
-test.describe("newsletter", () => {
-  test("accepts an address and rejects a malformed one", async ({ page }) => {
-    await page.goto("/");
-
-    const email = page.locator("#newsletter-email");
-    await email.fill("not-an-email");
-    // The browser's own validation stops this one before the action runs.
-    await expect(email).toHaveJSProperty("validity.valid", false);
-
-    await email.fill(`e2e-${Date.now()}@example.com`);
-    await page.locator("form").filter({ has: email }).getByRole("button").click();
-    await expect(page.getByText(/you're on the list/i)).toBeVisible();
-  });
-
-  test("carries a honeypot that no real visitor can reach", async ({ page }) => {
-    await page.goto("/");
-    const honeypot = page.locator('input[name="company"]');
-
-    await expect(honeypot).toBeAttached();
-    await expect(honeypot).not.toBeInViewport();
-    await expect(honeypot).toHaveAttribute("tabindex", "-1");
   });
 });
 

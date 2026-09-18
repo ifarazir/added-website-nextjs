@@ -22,6 +22,16 @@ the next person can check an implementation decision against the original.
   white sections scroll under it. Page content carries a right gutter and extra
   top padding so it never sits under the bars.
 - **The reversed E in the wordmark is correct.** It is part of the brand mark.
+- **The home page stops after the manifesto.** Selected objects, the index,
+  collaborations, the lookbook and the newsletter sign-up were taken off it at
+  the client's request, to keep the site short. The catalogue is reached through
+  the PRODUCTS menu and `/collection`; collaborations is now an email enquiry.
+  The admin panel still manages all of it, and the lookbook rows are kept.
+- **`reference/` outranks `prototypes/` where they disagree.** The prototypes
+  set the header's type an optical step apart from the brand's own page — a
+  deeper acid bar, uneven corner blocks, and menu lines spaced as far apart
+  inside a category as between two of them. The header follows the reference
+  PNGs on all three.
 - **Four hero photos came out of a PDF** at roughly 1000px and will look soft
   on large screens. Replacing them with the originals is a media upload, not a
   code change.
