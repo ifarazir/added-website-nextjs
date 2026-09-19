@@ -118,6 +118,24 @@
 }
 
 /* -------------------------------------------------------------------------- */
+/*  Utilities                                                                 */
+/* -------------------------------------------------------------------------- */
+
+@layer utilities {
+  /* Keeps a scrollable box scrollable without drawing a bar over it. Used by
+     the products menu, which only overflows on a short window or a long
+     catalogue and has no room for browser chrome across the photography. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
 /*  Base                                                                      */
 /* -------------------------------------------------------------------------- */
 

@@ -107,7 +107,7 @@ export function SiteHeader({ groups, phone, instagram, email }: Props) {
       <div
         id="products-menu"
         hidden={!open}
-        className="pointer-events-auto absolute top-[24vh] left-[6vw] flex max-h-[62vh] flex-col gap-[26px] overflow-y-auto pr-4 text-[11px] leading-[1.25] tracking-widest-brand uppercase md:top-[30vh] md:left-[3vw]"
+        className="no-scrollbar pointer-events-auto absolute top-[24vh] left-[6vw] flex max-h-[62vh] flex-col gap-[26px] overflow-y-auto pr-4 text-[11px] leading-[1.25] tracking-widest-brand uppercase md:top-[30vh] md:left-[3vw]"
       >
         {/* The lines of a category sit right under each other, with a blank
             line's worth of air between one category and the next. */}
