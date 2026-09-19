@@ -263,10 +263,15 @@ test.describe("not found", () => {
 });
 
 test.describe("SEO surface", () => {
-  test("robots.txt keeps crawlers out of the admin", async ({ request }) => {
+  test("robots.txt shuts a review deployment out of search results", async ({ request }) => {
+    // The suite runs against 127.0.0.1, which the site treats as a review
+    // host: nothing is crawlable and no sitemap is advertised. The rules the
+    // real domain serves — /admin and /uploads/ disallowed, sitemap named —
+    // are in tests/unit/robots.test.ts, because the canonical URL that
+    // decides between the two is inlined at build time.
     const body = await (await request.get("/robots.txt")).text();
-    expect(body).toContain("Disallow: /admin");
-    expect(body).toContain("Sitemap:");
+    expect(body).toMatch(/^Disallow: \/\s*$/m);
+    expect(body).not.toContain("Sitemap:");
   });
 
   test("the sitemap lists the catalogue", async ({ request }) => {
