@@ -91,7 +91,16 @@ export function SiteHeader({ groups, phone, instagram, email }: Props) {
         aria-label="Added Forms — home"
         className="pointer-events-auto absolute top-[4.5vh] left-[6vw] md:left-[3vw]"
       >
-        <LogoBlocks className={cn("transition-opacity duration-300", open && "opacity-75")} />
+        {/* On a product page the mark is set in acid rather than following
+            the header colour, as in the client's mark-up. When the products
+            menu opens it fades well back, so the menu reads over it. */}
+        <LogoBlocks
+          className={cn(
+            "transition-opacity duration-300",
+            pathname.startsWith("/product/") && "text-acid",
+            open && "opacity-25",
+          )}
+        />
       </Link>
 
       <button
